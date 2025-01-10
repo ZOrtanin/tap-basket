@@ -16,8 +16,40 @@ export class Game extends Scene
       }
 
 
+    create_old() {
+        // Настраиваемые размеры объектов
+        const hoopWidth = 100;
+        const hoopHeight = 10;
+        const backboardWidth = 20;
+        const backboardHeight = 100;
+        const ballRadius = 15;
+
+        // Добавляем кольцо с щитом
+        const backboard = this.matter.add.image(700, 300, 'backboard', null, { isStatic: true });
+        const hoop = this.matter.add.image(690, 350, 'hoop', null, { isStatic: true });
+
+        // Создаем мяч
+        this.ball = this.matter.add.image(200, 500, 'ball');
+        this.ball.setCircle();
+        this.ball.setBounce(0.8);
+        this.ball.setFriction(0.005);
+
+        // Управление мышью
+        this.input.on('pointerdown', (pointer) => {
+            this.matter.body.setPosition(this.ball.body, { x: pointer.x, y: pointer.y });
+        });
+
+        this.input.on('pointerup', (pointer) => {
+            const forceX = (pointer.x - this.ball.x) * 0.05;
+            const forceY = (pointer.y - this.ball.y) * 0.05;
+            this.ball.setVelocity(forceX, forceY);
+        });
+
+        // Земля
+        this.matter.add.rectangle(400, 590, 800, 20, { isStatic: true });
+    }
+
     create() {
-        this.add.image(512, 384, 'bg2');
 
         let hoopPositionX = 590;
         let hoopPositionY = 360;
@@ -85,12 +117,19 @@ export class Game extends Scene
         // Текст для отображения счета
         scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
-       
+        // Управление мышью
+        this.input.on('pointerdown', (pointer) => {
+            this.matter.body.setPosition(this.ball.body, { x: pointer.x, y: pointer.y });
+        });
+
+        this.input.on('pointerup', (pointer) => {
+            const forceX = (pointer.x - this.ball.x) * 0.05;
+            const forceY = (pointer.y - this.ball.y) * 0.05;
+            this.ball.setVelocity(forceX, forceY);
+        });
 
         // Земля
         let tree = this.matter.add.rectangle(100, 590, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(20) });
-        this.matter.add.rectangle(100, 190, 20, 800, { isStatic: true });
-        this.matter.add.rectangle(900, 190, 20, 800, { isStatic: true });
        
 
         // Добавляем вращающуюся платформу (лапка)
@@ -112,14 +151,13 @@ export class Game extends Scene
         // Управление вращением платформы с помощью клавиш
         this.input.keyboard.on('keydown-LEFT', () => {
            
-                this.matter.body.setAngularVelocity(paddle, -0.3); // Вращение против часовой стрелки
+                this.matter.body.setAngularVelocity(paddle, -0.5); // Вращение против часовой стрелки
             
         });
 
         this.input.keyboard.on('keydown-RIGHT', () => {
-            // if (Phaser.Math.RadToDeg(paddle.angle) < 0){
-                this.matter.body.setAngularVelocity(paddle, 0.3); // Вращение по часовой стрелке
-            //}
+            
+                this.matter.body.setAngularVelocity(paddle, 0.5); // Вращение по часовой стрелке
             
         });
 
@@ -175,19 +213,6 @@ export class Game extends Scene
             this.ball.setPosition(200, 500);
             this.ball.setVelocity(0, 0);
         }
-    }
-
-    controlMouse(){
-         // Управление мышью
-        this.input.on('pointerdown', (pointer) => {
-            this.matter.body.setPosition(this.ball.body, { x: pointer.x, y: pointer.y });
-        });
-
-        this.input.on('pointerup', (pointer) => {
-            const forceX = (pointer.x - this.ball.x) * 0.05;
-            const forceY = (pointer.y - this.ball.y) * 0.05;
-            this.ball.setVelocity(forceX, forceY);
-        });
     }
 
 

@@ -11,11 +11,12 @@ const config = {
     width: 1024,
     height: 768,
     parent: 'game-container',
-    backgroundColor: '#028af8',
+    backgroundColor: '#3A4452',
     physics: {
+
         default: 'matter',
         matter: {
-            gravity: { y: 0 },
+            gravity: { y: 1 },
             debug: true
         }
     },
