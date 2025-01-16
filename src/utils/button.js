@@ -1,5 +1,5 @@
 export default class Button extends Phaser.GameObjects.Sprite {
-    constructor(scene,x,y,over,out,text,type=false,value=false,touch=false) {
+    constructor(scene,x,y,over,out,text,color='#1E1E1E',type=false,value=false,touch=false) {
         super(scene); 
 
         this.scene = scene.scene;
@@ -14,8 +14,8 @@ export default class Button extends Phaser.GameObjects.Sprite {
         
         if(text!=undefined){
             this.text = scene.add.text(x, y, text, {
-            fontFamily: 'Alumni Sans Pinstripe', fontSize: 64, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            fontFamily: 'Alumni Sans Pinstripe', fontSize: 64, color: color,
+            // stroke: '#000000', strokeThickness: 8,
             align: 'center'
             }).setOrigin(0.5);
         }

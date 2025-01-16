@@ -10,7 +10,7 @@ export class Levels extends Scene
         super('Levels');
 
         this.levels = [
-            [0,{x:200,y:700},0],
+            [0,{x:200,y:700},1],
             [1,{x:300,y:700},0],[2,{x:550,y:800},0],
             [3,{x:550,y:300},0],[4,{x:550,y:600},0],
 
@@ -77,14 +77,12 @@ export class Levels extends Scene
 
 
     printBtn(x,y,name,coords,win){
-        this.button_new_game = new Button(
-            this, // сцена
-            x, // x
-            y, // y
-            '',
-            '',
-            name
-            );
+        if(win===0){
+            this.button_new_game = new Button(this,x,y,'','',name);
+        }else{
+            this.button_new_game = new Button(this,x,y,'','',name,'#ffffff');
+        }
+        
 
         this.button_new_game.relise = function() { 
             console.log(name);

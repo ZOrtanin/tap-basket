@@ -112,7 +112,7 @@ export class Game extends Scene
                 if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
                         score += 1;
-                        scoreText.setText('Score: ' + score);
+                        //scoreText.setText('Score: ' + score);
                         setTimeout(this.gameOver, 1500);
                         
                     }
@@ -121,7 +121,7 @@ export class Game extends Scene
         });
 
         // Текст для отображения счета
-        scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
        
 
@@ -357,6 +357,12 @@ export class Game extends Scene
         // Обработчик нажатия пробела
         this.input.keyboard.on('keydown-SPACE', () => {  
             // console.log(Phaser.Math.RadToDeg(paddle.angle)) 
+            if (Phaser.Math.RadToDeg(paddle.angle) < 0){        
+                this.matter.body.setAngularVelocity(paddle, 0.5); // Вращение против часовой стрелки            
+            }
+        });
+
+        this.input.on('pointerdown', (pointer) => {
             if (Phaser.Math.RadToDeg(paddle.angle) < 0){        
                 this.matter.body.setAngularVelocity(paddle, 0.5); // Вращение против часовой стрелки            
             }
