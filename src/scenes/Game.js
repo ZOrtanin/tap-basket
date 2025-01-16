@@ -51,7 +51,12 @@ export class Game extends Scene
         console.log('-- Уровень --');
         console.log(this.level);
         console.log('-------------');
-        this.shild_coords =  this.levels[this.level][1];
+        if(this.level < 0){
+            this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,800)}
+        }else{
+            this.shild_coords =  this.levels[this.level][1];
+        }
+        
       }
 
 

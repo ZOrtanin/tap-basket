@@ -31,11 +31,29 @@ export class MainMenu extends Scene
                 this.scene.start('Levels');          
             };
 
+        // Кнопка запуска рандомной игры
+            this.button_new_game = new Button(
+                this, // сцена
+                screenWidth/2, // x
+                screenHeight-600, // y
+                '','',
+                // 'start_button_activ', // не активна
+                // 'start_button', // активна
+                'рандом'
+                );
+
+            this.button_new_game.relise = function() { 
+                
+                const game = this.scene.get('Game');                
+                game.level = -1;
+                this.scene.start('Game')      
+            };
+
         // Кнопка настройки
             this.button_settings = new Button(
                 this, // сцена
                 screenWidth/2, // x
-                screenHeight-550, // y
+                screenHeight-500, // y
                 'start_settings_activ', // не активна
                 'start_settings', // активна
                 'настройки'
