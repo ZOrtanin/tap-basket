@@ -1,3 +1,6 @@
+import Button from '../utils/button.js';
+import {getRandomInt} from '../utils/utils.js';
+
 import { Scene } from 'phaser';
 
 export class Game extends Scene
@@ -5,78 +8,113 @@ export class Game extends Scene
     constructor (){
         super('Game');
 
+        // Попытки
+        this.attempts = 3;
+        this.attemptsIcons = [];
+
         this.circle = null;
         this.isDragging = false;
         this.startPosition = { x: 0, y: 0 };
         this.dragLine = null; // Линия для визуализации прицеливания
+
+        this.gameOver = this.gameOver.bind(this);
+
+        this.shild_coords = {x:550,y:800};
+        this.level = 0;
+
+        this.levels = [
+            [0,{x:200,y:700},0],
+            [1,{x:300,y:700},0],[2,{x:550,y:800},0],
+            [3,{x:550,y:300},0],[4,{x:550,y:600},0],
+
+            [5,{x:200,y:700},0],[6,{x:200,y:700},0],
+            [7,{x:200,y:700},0],[8,{x:200,y:700},0],
+
+            [9,{x:200,y:700},0],[10,{x:200,y:700},0],
+            [11,{x:200,y:700},0],[12,{x:200,y:700},0],
+
+            [13,{x:200,y:700},0],[14,{x:200,y:700},0],
+            [15,{x:200,y:700},0],[16,{x:200,y:700},0],
+
+            [17,{x:200,y:700},0],[18,{x:200,y:700},0],
+            [19,{x:200,y:700},0],[20,{x:200,y:700},0],
+
+            [21,{x:200,y:700},0],[22,{x:200,y:700},0],
+            [23,{x:200,y:700},0],           
+
+        ]
+
     }
 
     preload() {
         // Загружаем ресурсы (если понадобятся)
+        console.log('-- Уровень --');
+        console.log(this.level);
+        console.log('-------------');
+        this.shild_coords =  this.levels[this.level][1];
       }
 
 
     create() {
-        this.add.image(512, 384, 'bg2');
+        
+        
 
-        let hoopPositionX = 590;
-        let hoopPositionY = 360;
+        this.add.image(540, 984, 'bg2');
+        this.attempts = 3;
 
         let score = 0;
-        let scoreText;
-        // Настраиваемые размеры объектов
-        const hoopWidth = 100;
-        const hoopHeight = 10;
-        const backboardWidth = 20;
-        const backboardHeight = 100;
-        const ballRadius = 15;
+        let scoreText;  
 
-        // Добавляем кольцо с щитом
-        //const backboard = this.matter.add.rectangle(700, 300, backboardWidth, backboardHeight, { isStatic: true, render: { sprite: { texture: 'backboard' } } });
-        //const hoop = this.matter.add.rectangle(690, 350, hoopWidth, hoopHeight, { isStatic: true, render: { sprite: { texture: 'hoop' } } });
+         // Кнопка настроек
+            this.button_settings = new Button(
+                this, // сцена
+                100, // x
+                100, // y
+                'settings_activ', // не активна
+                'settings', // активна
+                );
 
-        let backboard = this.matter.add.image(hoopPositionX, hoopPositionY, 'backboard', null, { isStatic: true, isSensor: true});
-        backboard.setScale(0.4)       
+            this.button_settings.relise = function() { 
+                this.scene.start('MainMenu');         
+            };   
 
-        let border = this.matter.add.rectangle(hoopPositionX-60, hoopPositionY+10, 15, 15, { isStatic: true });
-        let border2 = this.matter.add.rectangle(hoopPositionX+60, hoopPositionY+10, 15, 15, { isStatic: true });
+        // Добовляем щит
+        let backboard = this.matter.add.image(this.shild_coords.x,this.shild_coords.y, 'backboard', null, { isStatic: true, isSensor: true});
+        backboard.setScale(0.7)
 
-        // Добавляем невидимый сенсор для засчета попадания
-        const hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+10, hoopWidth, 10, {
-            isSensor: true,
-            isStatic: true
-        });
-
+        // добовляем колличество попыток
+        this.addBalls();
 
         // Создаем мяч
-        this.ball = this.matter.add.image(200, 500,'ball',{
-                friction: 0.0005,
-                restitution: 0.5,
-                density: 0.0001,
+        this.ball = this.matter.add.image(935, 2000,'ball',{
+                friction: 1,
+                restitution: 0.005,
+                frictionAir: 0.0001,
+                density: 0.09,
                 isStatic: false,
                 angle: 10, // Угол в градусах
-                mass:1
+                mass: 0.01
+                
             });
-        // this.ball = this.matter.add.circle(200, 500, ballRadius, {
-        //     render: { sprite: { texture: 'ball' } }
-        // });
         this.ball.setCircle(60);
-        this.ball.setScale(0.5)
-        //this.ball.setBounce(1);
-        //this.ball.setFriction(0.0005);
+        this.ball.setScale(0.7)
+        this.ball.setBounce(0.5);
 
+        // добовляем кольцо
+        this.addHoop(this.shild_coords.x,this.shild_coords.y);
 
         
 
-        
 
         // Событие для проверки попадания
         this.matter.world.on('collisionstart', (event) => {
             event.pairs.forEach((pair) => {
-                if (pair.bodyA === hoopSensor || pair.bodyB === hoopSensor) {
+                if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
                         score += 1;
                         scoreText.setText('Score: ' + score);
+                        setTimeout(this.gameOver, 1500);
+                        
                     }
                 }
             });
@@ -88,55 +126,271 @@ export class Game extends Scene
        
 
         // Земля
-        let tree = this.matter.add.rectangle(100, 590, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(20) });
-        this.matter.add.rectangle(100, 190, 20, 800, { isStatic: true });
-        this.matter.add.rectangle(900, 190, 20, 800, { isStatic: true });
-       
+        //let tree = this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
+        this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
+        this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
+        this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });      
 
-        // Добавляем вращающуюся платформу (лапка)
-        const paddle = this.matter.add.rectangle(580, 730, 150, 20, {
-            render: { sprite: { texture: 'paddle' } },
-            density: 0.9,
+        this.addTramplin();
+
+
+        // Добовление педали
+        this.addPaddle();
+
+        
+
+        //this.controlMouse();
+    } 
+
+    gameOver(){
+        this.scene.start('GameOver');
+    }   
+
+    update() {
+        if(this.attempts == -1){
+            this.scene.start('GameOver');
+        }
+
+        // Если мяч вылетел за пределы, вернуть его на старт
+        if (this.ball.y > 2000) {
+            this.ball.setPosition(935, 500);
+            this.ball.setVelocity(0, 0);
+            this.removeBalls()
+            this.attempts -= 1;
+        }
+
+        // Обновляем сетку
+        this.updateNet();
+    }
+
+    addBalls(){
+        for (let i = 0; i < this.attempts; i++) {
+            const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
+            this.attemptsIcons.push(icon);
+        }
+
+        this.attemptsIcons.reverse();
+        
+    }
+
+    removeBalls(){
+        for (const item of this.attemptsIcons) {
+            if(item._visible != false){
+                item.setVisible(false);
+                return;
+            }
+        }
+    }
+    
+
+    addTramplin(){
+         // Создаём массив точек для дуги
+        const vertices = [];
+        const radius = 400; // Радиус дуги
+        const startAngle = Phaser.Math.DegToRad(0); // Начальный угол
+        const endAngle = Phaser.Math.DegToRad(90); // Конечный угол
+        const steps = 20; // Количество сегментов для гладкости дуги
+
+        for (let i = 0; i <= steps; i++) {
+            const angle = startAngle + (i / steps) * (endAngle - startAngle);
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            vertices.push({ x, y });
+        }
+
+        // Закрываем дугу с другой стороны
+        for (let i = steps; i >= 0; i--) {
+            const angle = startAngle + (i / steps) * (endAngle - startAngle);
+            const x = Math.cos(angle) * (radius - 20); // Внутренняя часть дуги
+            const y = Math.sin(angle) * (radius - 20);
+            vertices.push({ x, y });
+        }
+
+        this.matter.add.fromVertices(890, 1520, vertices, {
+            friction: 0.0005,
+            restitution: 0.5,
+            density: 0.0001,
+            isStatic: true
+        }, true); // true позволяет автоматически корректировать форму
+    }
+
+    // Кольцо
+    addHoop(x,y){
+
+        let hoopPositionX = x;
+        let hoopPositionY = y;
+        const hoopWidth = 100;
+        const hoopHeight = 10;
+        
+        let ring = this.matter.add.image(hoopPositionX, hoopPositionY+15, 'ring', null, { isStatic: true, isSensor: true});
+        ring.setScale(0.7)       
+
+        let border = this.matter.add.rectangle(hoopPositionX-65, hoopPositionY+10, 5, 15, { isStatic: true });
+        let border2 = this.matter.add.rectangle(hoopPositionX+65, hoopPositionY+10, 5, 15, { isStatic: true });
+
+        // Добавляем невидимый сенсор для засчета попадания
+        this.hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+20, hoopWidth, 10, {
+            isSensor: true,
+            isStatic: true
         });
 
+        // добовляем сетку
+        this.addNet(x,y); //550,500
+    }
+
+    addNet(x,y){
+        // Кординаты для отрисовки сетки
+        this.coordnet = {x:x-70,y:y+10}
+
+        const group = this.matter.world.nextGroup(true);
+
+        const particleOptions = { 
+            friction: 0.00001, 
+            collisionFilter: { group: group }, 
+            render: { visible: false } 
+        };
+
+        const constraintOptions = { stiffness: 0.03 };
+
+        // softBody: function (x, y, columns, rows, columnGap, rowGap, crossBrace, particleRadius, particleOptions, constraintOptions)
+        // 480, 510
+        this.cloth = this.matter.add.softBody(this.coordnet.x, this.coordnet.y, 6, 6, 10, 10, false, 8, particleOptions, constraintOptions);
+
+        for (let i = 0; i < this.cloth.bodies.length; i++)
+            {
+                const body = this.cloth.bodies[i];
+
+                if (i == 0 || i == 5)
+                {
+                    body.isStatic = true;
+                }
+            }
+
+        // Создаем графический объект для текстуры
+        this.netTexture = this.add.graphics();
+
+        // Отображаем сетку
+        this.updateNet();
+    }
+
+    updateNet() {
+        this.netTexture.clear(); // Очищаем старое изображение  
+        
+        // задаем стиль для рисования сетки
+        this.netTexture.lineStyle(2, 0x1E1E1E, 1);     
+
+        const bodies = this.cloth.bodies;
+
+        for (let i = 0; i < this.cloth.bodies.length; i++) {
+            const bodyA = bodies[i];
+            const xA = bodyA.position.x;
+            const yA = bodyA.position.y;
+
+            // Соединяем текущую частицу с соседями (сетка)
+            const neighbors = this.getNeighbors(i); // Получаем соседние индексы
+            
+            // Привязываем сетку к кольцу
+            if(i > 0 && i < 5 ){
+                //480, 500
+                this.netTexture.lineBetween(xA, yA, 27*i+this.coordnet.x, this.coordnet.y+5); 
+            }           
+
+            for (let j of neighbors) {
+                const bodyB = bodies[j];
+                const xB = bodyB.position.x;
+                const yB = bodyB.position.y;
+
+                // рисуем сетку но не всю чтобы остались ввисячие шнурки
+                if(j<24){                    
+                    // Рисуем линию между частицами
+                    this.netTexture.lineBetween(xA, yA, xB, yB);
+                }
+                
+            }
+
+        }
+    }
+
+    getNeighbors(index) {
+        const cols = 6; // Число частиц в строке
+        const neighbors = [];
+
+        // Добавляем соседей по строкам и столбцам
+        if (index % cols !== 0) neighbors.push(index - 1); // Левый сосед
+        if ((index + 1) % cols !== 0) neighbors.push(index + 1); // Правый сосед
+        if (index >= cols) neighbors.push(index - cols); // Верхний сосед
+        if (index < cols * (cols - 1)) neighbors.push(index + cols); // Нижний сосед
+
+        return neighbors;
+    }
+    // Кольцо - конец
+
+    addPaddle(){
+        // Добавляем вращающуюся платформу (лапка)
+        let paddle = this.matter.add.rectangle(580, 730, 400, 100, {
+            // render: { sprite: { texture: 'paddle' } },
+            friction: 0.0005,
+            restitution: 0.5,
+            density: 0.0001,
+        });
+
+        console.log(paddle);
+
+        let sprite = this.add.sprite(100, 100, 'paddle');
+
+        this.matter.add.gameObject(sprite, paddle);
+
+
+        //добовляем ограничитель
+        this.matter.add.rectangle(570, 1860, 20, 20, { isStatic: true })
+
         // Ось вращения платформы
-        const pivot = this.matter.add.circle(510, 730, 5, { isStatic: true });
+        const pivot = this.matter.add.circle(770, 1730, 5, { isStatic: true });
 
         // Связь между платформой и осью
         this.matter.add.constraint(paddle, pivot, 0, 1,{
-            pointA: { x: -65, y: 0 }, // Смещение точки привязки на правый край платформы
-            pointB: { x: 0, y: 0 },
+            pointA: { x:150, y: 0 }, // Смещение точки привязки на правый край платформы
+            pointB: { x: -150, y: 0 },
             stiffness: 1
         });
 
+        // Обработчик нажатия пробела
+        this.input.keyboard.on('keydown-SPACE', () => {  
+            // console.log(Phaser.Math.RadToDeg(paddle.angle)) 
+            if (Phaser.Math.RadToDeg(paddle.angle) < 0){        
+                this.matter.body.setAngularVelocity(paddle, 0.5); // Вращение против часовой стрелки            
+            }
+        });
+
         // Управление вращением платформы с помощью клавиш
-        this.input.keyboard.on('keydown-LEFT', () => {
-           
-                this.matter.body.setAngularVelocity(paddle, -0.3); // Вращение против часовой стрелки
-            
+        this.input.keyboard.on('keydown-LEFT', () => {           
+                this.matter.body.setAngularVelocity(paddle, -0.5); // Вращение против часовой стрелки            
         });
 
         this.input.keyboard.on('keydown-RIGHT', () => {
             // if (Phaser.Math.RadToDeg(paddle.angle) < 0){
-                this.matter.body.setAngularVelocity(paddle, 0.3); // Вращение по часовой стрелке
+                this.matter.body.setAngularVelocity(paddle, 0.5); // Вращение по часовой стрелке
             //}
             
         });
 
-        // Ограничение угла вращения
-        this.matter.world.on('beforeupdate', () => {
-            const angle = Phaser.Math.RadToDeg(paddle.angle);
-            if (angle < 90) {
-                this.matter.body.setAngle(paddle, Phaser.Math.DegToRad(0));
-                //this.matter.body.setAngularVelocity(paddle, 0.01);
-            } else if (angle > 0) {
-                this.matter.body.setAngle(paddle, Phaser.Math.DegToRad(0));
-                //this.matter.body.setAngularVelocity(paddle, -0.001);
-            }
-        });
+        this.matter.body.setAngle(paddle, Phaser.Math.DegToRad(90));
 
+        // // Ограничение угла вращения
+        // this.matter.world.on('beforeupdate', () => {
+        //     const angle = Phaser.Math.RadToDeg(paddle.angle);
+        //     if (angle < 180) {
+        //         this.matter.body.setAngle(paddle, Phaser.Math.DegToRad(0));
+        //         //this.matter.body.setAngularVelocity(paddle, 0.01);
+        //     } else if (angle > 0) {
+        //         this.matter.body.setAngle(paddle, Phaser.Math.DegToRad(0));
+        //         //this.matter.body.setAngularVelocity(paddle, -0.001);
+        //     }
+        // });
     }
 
+
+    // допы
     onPointerDown(pointer) {
         const dist = Phaser.Math.Distance.Between(pointer.x, pointer.y, this.circle.position.x, this.circle.position.y);
         if (dist < 20) {
@@ -166,14 +420,6 @@ export class Game extends Scene
             this.circle.position.x, this.circle.position.y, // Начало линии
             pointer.x, pointer.y // Текущее положение мыши
           );
-        }
-    }
-
-     update() {
-        // Если мяч вылетел за пределы, вернуть его на старт
-        if (this.ball.y > 800) {
-            this.ball.setPosition(200, 500);
-            this.ball.setVelocity(0, 0);
         }
     }
 
