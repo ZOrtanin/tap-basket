@@ -42,7 +42,12 @@ export class Preloader extends Scene
         this.load.image('bg2', 'bg2.png');
         this.load.image('bg_main', 'bg_main.png');
         this.load.image('bg_levels', 'levels.png');
+
         this.load.image('stars', 'stars.png');
+        this.load.image('1stars', '1stars.png');
+        this.load.image('2stars', '2stars.png');
+        this.load.image('3stars', '3stars.png');
+        
         this.load.image('button_win', 'button_win.png');
         this.load.image('button_fall', 'button_fall.png');
         this.load.image('game_over', 'game_over.png');

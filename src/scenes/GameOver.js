@@ -7,7 +7,7 @@ export class GameOver extends Scene
     constructor ()
     {
         super('GameOver');
-
+        this.star = 0;
         
     }
 
@@ -40,9 +40,20 @@ export class GameOver extends Scene
     }
 
     win(){
-        
 
-        this.add.image(540, 584, 'stars');
+        if(this.star === 2){
+            this.add.image(540, 584, '3stars');
+        }
+        
+        if(this.star === 1){
+            this.add.image(540, 584, '2stars');
+        }
+
+        if(this.star === 0){
+            this.add.image(540, 584, '1stars');
+        }
+
+        
         //this.add.image(540, 984, 'button_win');
 
         // следуйщий уровень

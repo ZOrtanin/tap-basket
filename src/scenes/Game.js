@@ -22,25 +22,27 @@ export class Game extends Scene
         this.shild_coords = {x:550,y:800};
         this.level = 0;
 
+        this.perfect = 0;
+
         this.levels = [
-            [0,{x:200,y:700},0],
+            [0,{x:200,y:700},1],
             [1,{x:300,y:700},0],[2,{x:550,y:800},0],
             [3,{x:550,y:300},0],[4,{x:550,y:600},0],
 
-            [5,{x:200,y:700},0],[6,{x:200,y:700},0],
-            [7,{x:200,y:700},0],[8,{x:200,y:700},0],
+            [5,{x:415,y:546},0],[6,{x:662,y:462},0],
+            [7,{x:696,y:336},0],[8,{x:342,y:400},0],
 
-            [9,{x:200,y:700},0],[10,{x:200,y:700},0],
-            [11,{x:200,y:700},0],[12,{x:200,y:700},0],
+            [9,{x:558,y:586},0],[10,{x:411,y:543},0],
+            [11,{x:641,y:450},0],[12,{x:362,y:1045},0],
 
-            [13,{x:200,y:700},0],[14,{x:200,y:700},0],
-            [15,{x:200,y:700},0],[16,{x:200,y:700},0],
+            [13,{x:630,y:890},0],[14,{x:481,y:562},0],
+            [15,{x:596,y:911},0],[16,{x:516,y:1098},0],
 
-            [17,{x:200,y:700},0],[18,{x:200,y:700},0],
-            [19,{x:200,y:700},0],[20,{x:200,y:700},0],
+            [17,{x:251,y:851},0],[18,{x:309,y:835},0],
+            [19,{x:438,y:964},0],[20,{x:388,y:255},0],
 
-            [21,{x:200,y:700},0],[22,{x:200,y:700},0],
-            [23,{x:200,y:700},0],           
+            [21,{x:777,y:482},0],[22,{x:444,y:978},0],
+            [23,{x:635,y:376},0],           
 
         ]
 
@@ -48,16 +50,25 @@ export class Game extends Scene
 
     preload() {
         // Загружаем ресурсы (если понадобятся)
-        console.log('-- Уровень --');
-        console.log(this.level);
-        console.log('-------------');
+        // console.log('-- Уровень --');
+        // console.log(this.level);
+        // console.log('-------------');
         if(this.level < 0){
-            this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,800)}
+            this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,1100)}
         }else{
             this.shild_coords =  this.levels[this.level][1];
         }
-        
-      }
+    
+        // console.log('-------------');
+        // console.log(this.shild_coords);
+        // console.log('-------------');
+
+        this.perfect = 0;
+
+        const win_scren = this.scene.get('GameOver');
+         win_scren.star = 0;
+
+    }
 
 
     create() {
@@ -66,6 +77,8 @@ export class Game extends Scene
 
         this.add.image(540, 984, 'bg2');
         this.attempts = 3;
+
+        this.add.text(350, 500, this.level, { fontSize: '764px', fill: '#37404D' });
 
         let score = 0;
         let scoreText;  
@@ -116,10 +129,32 @@ export class Game extends Scene
             event.pairs.forEach((pair) => {
                 if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        score += 1;
+                        //score += 1;
                         //scoreText.setText('Score: ' + score);
+                        const win_scren = this.scene.get('GameOver');
+                        if(this.perfect === 1){                            
+                            win_scren.star = 1;
+                        }                        
                         setTimeout(this.gameOver, 1500);
                         
+                    }
+                }
+
+                if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        if(this.perfect === 0){
+                            this.perfect += 1;
+                        }
+                        console.log(this.perfect,'добавили');
+                    }
+                }
+
+                if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        if(this.perfect!=0){
+                            this.perfect -= 1;
+                        }                        
+                        console.log(this.perfect,'убавили');
                     }
                 }
             });
@@ -140,9 +175,7 @@ export class Game extends Scene
 
 
         // Добовление педали
-        this.addPaddle();
-
-        
+        this.addPaddle();        
 
         //this.controlMouse();
     } 
@@ -191,9 +224,9 @@ export class Game extends Scene
     addTramplin(){
          // Создаём массив точек для дуги
         const vertices = [];
-        const radius = 400; // Радиус дуги
+        const radius = 450; // Радиус дуги
         const startAngle = Phaser.Math.DegToRad(0); // Начальный угол
-        const endAngle = Phaser.Math.DegToRad(90); // Конечный угол
+        const endAngle = Phaser.Math.DegToRad(80); // Конечный угол
         const steps = 20; // Количество сегментов для гладкости дуги
 
         for (let i = 0; i <= steps; i++) {
@@ -211,7 +244,7 @@ export class Game extends Scene
             vertices.push({ x, y });
         }
 
-        this.matter.add.fromVertices(890, 1520, vertices, {
+        this.matter.add.fromVertices(920, 1500, vertices, {
             friction: 0.0005,
             restitution: 0.5,
             density: 0.0001,
@@ -235,6 +268,12 @@ export class Game extends Scene
 
         // Добавляем невидимый сенсор для засчета попадания
         this.hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+20, hoopWidth, 10, {
+            isSensor: true,
+            isStatic: true
+        });
+
+        // Добавляем невидимый сенсор для засчета попадания
+        this.winSensor = this.matter.add.rectangle(hoopPositionX , hoopPositionY-50, 10, 10, {
             isSensor: true,
             isStatic: true
         });
@@ -339,7 +378,9 @@ export class Game extends Scene
             density: 0.0001,
         });
 
-        console.log(paddle);
+        this.paddle_sensor = paddle;
+
+        //console.log(paddle);
 
         let sprite = this.add.sprite(100, 100, 'paddle');
 
@@ -350,7 +391,7 @@ export class Game extends Scene
         this.matter.add.rectangle(570, 1860, 20, 20, { isStatic: true })
 
         // Ось вращения платформы
-        const pivot = this.matter.add.circle(770, 1730, 5, { isStatic: true });
+        const pivot = this.matter.add.circle(770, 1750, 5, { isStatic: true });
 
         // Связь между платформой и осью
         this.matter.add.constraint(paddle, pivot, 0, 1,{
