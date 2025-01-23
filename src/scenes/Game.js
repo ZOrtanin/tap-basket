@@ -26,10 +26,10 @@ export class Game extends Scene
 
         this.levels = [
             [0,{x:200,y:700},1],
-            [1,{x:300,y:700},0],[2,{x:550,y:800},0],
-            [3,{x:550,y:300},0],[4,{x:550,y:600},0],
+            [1,{x:300,y:700},1],[2,{x:550,y:800},1],
+            [3,{x:550,y:300},1],[4,{x:550,y:600},1],
 
-            [5,{x:415,y:546},0],[6,{x:662,y:462},0],
+            [5,{x:415,y:546},1],[6,{x:662,y:462},1],
             [7,{x:696,y:336},0],[8,{x:342,y:400},0],
 
             [9,{x:558,y:586},0],[10,{x:411,y:543},0],
@@ -66,7 +66,7 @@ export class Game extends Scene
         this.perfect = 0;
 
         const win_scren = this.scene.get('GameOver');
-         win_scren.star = 0;
+        win_scren.star = 0;
 
     }
 
@@ -78,7 +78,7 @@ export class Game extends Scene
         this.add.image(540, 984, 'bg2');
         this.attempts = 3;
 
-        this.add.text(350, 500, this.level, { fontSize: '764px', fill: '#37404D' });
+        this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
 
         let score = 0;
         let scoreText;  
@@ -134,7 +134,8 @@ export class Game extends Scene
                         const win_scren = this.scene.get('GameOver');
                         if(this.perfect === 1){                            
                             win_scren.star = 1;
-                        }                        
+                        }
+                        this.levels[this.level][2] = 1;                        
                         setTimeout(this.gameOver, 1500);
                         
                     }

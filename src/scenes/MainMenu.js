@@ -24,7 +24,8 @@ export class MainMenu extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'старт'
+                'старт',
+                '#D9D9D9'
                 );
 
             this.button_new_game.relise = function() { 
@@ -39,7 +40,8 @@ export class MainMenu extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'рандом'
+                'рандом',
+                '#D9D9D9'
                 );
 
             this.button_new_game.relise = function() { 
@@ -54,9 +56,10 @@ export class MainMenu extends Scene
                 this, // сцена
                 screenWidth/2, // x
                 screenHeight-500, // y
-                'start_settings_activ', // не активна
-                'start_settings', // активна
-                'настройки'
+                '', // не активна
+                '', // активна
+                'настройки',
+                '#D9D9D9'
                 );
 
             this.button_settings.relise = function() { 

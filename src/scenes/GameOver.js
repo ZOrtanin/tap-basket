@@ -63,7 +63,8 @@ export class GameOver extends Scene
             this.screenHeight-900, // y
             '', // не активна
             '', // активна
-            'дальше'
+            'дальше',
+            '#D9D9D9'
             );
 
         this.button_new_game.relise = function() { 
@@ -79,7 +80,8 @@ export class GameOver extends Scene
             this.screenHeight-800, // y
             '', // не активна
             '', // активна
-            'еще'
+            'еще',
+            '#D9D9D9'
             );
 
         this.button_new_game.relise = function() { 
@@ -93,7 +95,8 @@ export class GameOver extends Scene
             this.screenHeight-700, // y
             '', // не активна
             '', // активна
-            'в меню'
+            'в меню',
+            '#D9D9D9'
             );
 
         this.button_new_game.relise = function() { 
@@ -111,14 +114,30 @@ export class GameOver extends Scene
         this.button_new_game = new Button(
             this, // сцена
             this.screenWidth/2, // x
-            this.screenHeight-700, // y
+            this.screenHeight-800, // y
             '', // не активна
             '', // активна
-            'еще'
+            'еще',
+            '#D9D9D9'
             );
 
         this.button_new_game.relise = function() { 
             this.scene.start('Game');          
+        };
+
+        // выход в менб
+        this.button_new_game = new Button(
+            this, // сцена
+            this.screenWidth/2, // x
+            this.screenHeight-700, // y
+            '', // не активна
+            '', // активна
+            'в меню',
+            '#D9D9D9'
+            );
+
+        this.button_new_game.relise = function() { 
+            this.scene.start('MainMenu');          
         };
     }
 }

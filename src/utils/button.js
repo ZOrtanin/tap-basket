@@ -14,7 +14,9 @@ export default class Button extends Phaser.GameObjects.Sprite {
         
         if(text!=undefined){
             this.text = scene.add.text(x, y, text, {
-            fontFamily: 'Alumni Sans Pinstripe', fontSize: 64, color: color,
+            fontFamily: 'Sofia Sans Condensed', 
+            fontSize: 64, 
+            color: color,
             // stroke: '#000000', strokeThickness: 8,
             align: 'center'
             }).setOrigin(0.5);

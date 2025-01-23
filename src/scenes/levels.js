@@ -8,28 +8,11 @@ export class Levels extends Scene
     constructor ()
     {
         super('Levels');
+    }
 
-        this.levels = [
-            [0,{x:200,y:700},1],
-            [1,{x:300,y:700},0],[2,{x:550,y:800},0],
-            [3,{x:550,y:300},0],[4,{x:550,y:600},0],
-
-            [5,{x:415,y:546},0],[6,{x:662,y:462},0],
-            [7,{x:696,y:336},0],[8,{x:342,y:400},0],
-
-            [9,{x:558,y:586},0],[10,{x:411,y:543},0],
-            [11,{x:641,y:450},0],[12,{x:362,y:1045},0],
-
-            [13,{x:630,y:890},0],[14,{x:200,y:700},0],
-            [15,{x:200,y:700},0],[16,{x:200,y:700},0],
-
-            [17,{x:200,y:700},0],[18,{x:200,y:700},0],
-            [19,{x:200,y:700},0],[20,{x:200,y:700},0],
-
-            [21,{x:200,y:700},0],[22,{x:200,y:700},0],
-            [23,{x:200,y:700},0],           
-
-        ]
+    preload() {
+        const game = this.scene.get('Game');
+        this.levels = game.levels;
     }
 
     create (){
@@ -52,7 +35,7 @@ export class Levels extends Scene
                row += 1; 
                col = 0 ;
             }
-            this.printBtn(200*col+230,200*row+300,item[0],item[1],item[2]);
+            this.printBtn(208*col+220,211*row+260,item[0],item[1],item[2]);
             col +=1;
         });
 
@@ -64,15 +47,13 @@ export class Levels extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'назад'
+                'назад',
+                '#D9D9D9'
                 );
 
             this.button_new_game.relise = function() { 
                 this.scene.start('MainMenu');          
             }; 
-
-        
-
     }
 
 
