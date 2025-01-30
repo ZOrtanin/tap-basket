@@ -1,4 +1,5 @@
 import Button from '../utils/button.js';
+import GameProgress from '../utils/GameProgress.js';
 
 import { Scene } from 'phaser';
 
@@ -7,14 +8,40 @@ export class MainMenu extends Scene
     constructor ()
     {
         super('MainMenu');
+        this.progressManager = new GameProgress();
+        this.nextScren = '____';
     }
 
-    create ()
-    {
+    preload() {
+        // this.progressManager.clear() // сбрасываем сохранение
+        // загрузка настроек из локал сторедж
+        const loadedProgress = this.progressManager.load();
+        if (loadedProgress) {
+            console.log('Загруженный прогресс:', loadedProgress.levels);
+
+            // установка настроек
+
+            // перебор уровней
+            const game = this.scene.get('Game');
+            game.levels = loadedProgress.levels;
+            // game.levels.forEach(item=>{
+            //     if(loadedProgress.level > item[0] || loadedProgress.level == item[0]){
+            //         item[1]=1;
+            //     }else{
+            //         item[1]=0;
+            //     }
+            // });
+        }
+
+        
+    }
+
+    create (){
         let screenWidth = this.game.config.width;
         let screenHeight = this.game.config.height;
 
         this.add.image(540, 984, 'bg_main');
+        this.block = this.matter.add.rectangle(550, 600, 10, 100, { isStatic: true });
 
         // Кнопка запуска игры
             this.button_new_game = new Button(
@@ -29,7 +56,17 @@ export class MainMenu extends Scene
                 );
 
             this.button_new_game.relise = function() { 
-                this.scene.start('Levels');          
+                
+                //this.scene.start('Levels');
+                
+                const gamemenu = this.scene.get('MainMenu');
+                gamemenu.block.isStatic = false;
+                gamemenu.nextScren = 'Levels';
+               
+                setTimeout(function() {
+                    gamemenu.nextScrenSwich('Levels');
+                }, 1500);
+
             };
 
         // Кнопка запуска рандомной игры
@@ -45,8 +82,11 @@ export class MainMenu extends Scene
                 );
 
             this.button_new_game.relise = function() { 
-                
-                const game = this.scene.get('Game');                
+
+                const gamemenu = this.scene.get('MainMenu');
+                gamemenu.block.isStatic = false;
+
+                const game = this.scene.get('Game'); 
                 game.level = -1;
                 this.scene.start('Game')      
             };
@@ -63,8 +103,31 @@ export class MainMenu extends Scene
                 );
 
             this.button_settings.relise = function() { 
-                //this.scene.start('Game');          
+                const gamemenu = this.scene.get('MainMenu');
+                gamemenu.block.isStatic = false;         
             };
+
+        // Добовляем щит
+            let backboard = this.matter.add.image(550,600, 'backboard', null, { isStatic: true, isSensor: true});
+            backboard.setScale(0.7)
+
+        // Создаем мяч
+            this.ball = this.matter.add.image(550, 500,'ball',{
+                    friction: 1,
+                    restitution: 0.005,
+                    frictionAir: 0.0001,
+                    density: 0.09,
+                    isStatic: false,
+                    angle: 10, // Угол в градусах
+                    mass: 0.01
+                    
+                });
+            this.ball.setCircle(60);
+            this.ball.setScale(0.7)
+            this.ball.setBounce(0.5);
+
+        // добовляем кольцо
+            this.addHoop(550,600);
 
         //this.add.image(512, 300, 'logo');
 
@@ -80,4 +143,134 @@ export class MainMenu extends Scene
 
         // });
     }
+
+
+
+    update() {
+        
+        // Обновляем сетку
+        this.updateNet();
+    }
+
+    nextScrenSwich(screen){
+        //console.log(screen);
+        this.scene.start(screen);        
+    }
+
+    // Кольцо
+    addHoop(x,y){
+
+        let hoopPositionX = x;
+        let hoopPositionY = y;
+        const hoopWidth = 100;
+        const hoopHeight = 10;
+        
+        let ring = this.matter.add.image(hoopPositionX, hoopPositionY+15, 'ring', null, { isStatic: true, isSensor: true});
+        ring.setScale(0.7)       
+
+        let border = this.matter.add.rectangle(hoopPositionX-65, hoopPositionY+10, 5, 15, { isStatic: true });
+        let border2 = this.matter.add.rectangle(hoopPositionX+65, hoopPositionY+10, 5, 15, { isStatic: true });
+
+        // Добавляем невидимый сенсор для засчета попадания
+        this.hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+20, hoopWidth, 10, {
+            isSensor: true,
+            isStatic: true
+        });
+
+        // Добавляем невидимый сенсор для засчета попадания
+        this.winSensor = this.matter.add.rectangle(hoopPositionX , hoopPositionY-50, 10, 10, {
+            isSensor: true,
+            isStatic: true
+        });
+
+        // добовляем сетку
+        this.addNet(x,y); //550,500
+    }
+
+    addNet(x,y){
+        // Кординаты для отрисовки сетки
+        this.coordnet = {x:x-70,y:y+10}
+
+        const group = this.matter.world.nextGroup(true);
+
+        const particleOptions = { 
+            friction: 0.00001, 
+            collisionFilter: { group: group }, 
+            render: { visible: false } 
+        };
+
+        const constraintOptions = { stiffness: 0.03 };
+
+        // softBody: function (x, y, columns, rows, columnGap, rowGap, crossBrace, particleRadius, particleOptions, constraintOptions)
+        // 480, 510
+        this.cloth = this.matter.add.softBody(this.coordnet.x, this.coordnet.y, 6, 6, 10, 10, false, 8, particleOptions, constraintOptions);
+
+        for (let i = 0; i < this.cloth.bodies.length; i++)
+            {
+                const body = this.cloth.bodies[i];
+
+                if (i == 0 || i == 5)
+                {
+                    body.isStatic = true;
+                }
+            }
+
+        // Создаем графический объект для текстуры
+        this.netTexture = this.add.graphics();
+
+        // Отображаем сетку
+        this.updateNet();
+    }
+
+    updateNet() {
+        this.netTexture.clear(); // Очищаем старое изображение  
+        
+        // задаем стиль для рисования сетки
+        this.netTexture.lineStyle(2, 0x1E1E1E, 1);     
+
+        const bodies = this.cloth.bodies;
+
+        for (let i = 0; i < this.cloth.bodies.length; i++) {
+            const bodyA = bodies[i];
+            const xA = bodyA.position.x;
+            const yA = bodyA.position.y;
+
+            // Соединяем текущую частицу с соседями (сетка)
+            const neighbors = this.getNeighbors(i); // Получаем соседние индексы
+            
+            // Привязываем сетку к кольцу
+            if(i > 0 && i < 5 ){
+                //480, 500
+                this.netTexture.lineBetween(xA, yA, 27*i+this.coordnet.x, this.coordnet.y+5); 
+            }           
+
+            for (let j of neighbors) {
+                const bodyB = bodies[j];
+                const xB = bodyB.position.x;
+                const yB = bodyB.position.y;
+
+                // рисуем сетку но не всю чтобы остались ввисячие шнурки
+                if(j<24){                    
+                    // Рисуем линию между частицами
+                    this.netTexture.lineBetween(xA, yA, xB, yB);
+                }
+                
+            }
+
+        }
+    }
+
+    getNeighbors(index) {
+        const cols = 6; // Число частиц в строке
+        const neighbors = [];
+
+        // Добавляем соседей по строкам и столбцам
+        if (index % cols !== 0) neighbors.push(index - 1); // Левый сосед
+        if ((index + 1) % cols !== 0) neighbors.push(index + 1); // Правый сосед
+        if (index >= cols) neighbors.push(index - cols); // Верхний сосед
+        if (index < cols * (cols - 1)) neighbors.push(index + cols); // Нижний сосед
+
+        return neighbors;
+    }
+    // Кольцо - конец
 }

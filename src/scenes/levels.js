@@ -8,9 +8,18 @@ export class Levels extends Scene
     constructor ()
     {
         super('Levels');
+
+        this.playerProgress = {
+                    level: 0,
+                    score: 1200,
+                    items: ['sword', 'shield'],
+                };
+
+        
     }
 
     preload() {
+       
         const game = this.scene.get('Game');
         this.levels = game.levels;
     }
@@ -57,11 +66,21 @@ export class Levels extends Scene
     }
 
 
-    printBtn(x,y,name,coords,win){
+    printBtn(x,y,name,win,star){
         if(win===0){
             this.button_new_game = new Button(this,x,y,'','',name);
         }else{
             this.button_new_game = new Button(this,x,y,'','',name,'#ffffff');
+        }        
+
+        if(star>-1){            
+            this.add.circle(x+61, y, 7, 0x1E1E1E);
+        }
+        if(star>1 || star===1){            
+            this.add.circle(x+61, y+27, 7, 0x1E1E1E);
+        }
+        if(star>2 || star===2){            
+            this.add.circle(x+61, y-27, 7, 0x1E1E1E);
         }
         
 

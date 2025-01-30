@@ -3,8 +3,7 @@ import {getRandomInt} from '../utils/utils.js';
 
 import { Scene } from 'phaser';
 
-export class Game extends Scene
-{
+export class Game extends Scene{
     constructor (){
         super('Game');
 
@@ -25,24 +24,35 @@ export class Game extends Scene
         this.perfect = 0;
 
         this.levels = [
-            [0,{x:200,y:700},1],
-            [1,{x:300,y:700},1],[2,{x:550,y:800},1],
-            [3,{x:550,y:300},1],[4,{x:550,y:600},1],
+            [0,1,-1,{x:200,y:700},{x:300,y:300},[450,300,180,380,300,20,true]],
+            [1,0,-1,{x:300,y:700},{x:200,y:500}],
+            [2,0,-1,{x:550,y:800},{x:100,y:700}],
+            [3,0,-1,{x:550,y:300},{x:300,y:300}],
 
-            [5,{x:415,y:546},1],[6,{x:662,y:462},1],
-            [7,{x:696,y:336},0],[8,{x:342,y:400},0],
+            [4,0,-1,{x:550,y:600}],
+            [5,0,-1,{x:415,y:546}],
+            [6,0,-1,{x:662,y:462}],
+            [7,0,-1,{x:696,y:336}],
 
-            [9,{x:558,y:586},0],[10,{x:411,y:543},0],
-            [11,{x:641,y:450},0],[12,{x:362,y:1045},0],
+            [8,0,-1,{x:342,y:400}],
+            [9,0,-1,{x:558,y:586}],
+            [10,0,-1,{x:411,y:543}],
+            [11,0,-1,{x:641,y:450}],
 
-            [13,{x:630,y:890},0],[14,{x:481,y:562},0],
-            [15,{x:596,y:911},0],[16,{x:516,y:1098},0],
+            [12,0,-1,{x:362,y:1045}],
+            [13,0,-1,{x:630,y:890}],
+            [14,0,-1,{x:481,y:562}],
+            [15,0,-1,{x:596,y:911}],
 
-            [17,{x:251,y:851},0],[18,{x:309,y:835},0],
-            [19,{x:438,y:964},0],[20,{x:388,y:255},0],
+            [16,0,-1,{x:516,y:1098}],
+            [17,0,-1,{x:251,y:851}],
+            [18,0,-1,{x:309,y:835}],
+            [19,0,-1,{x:438,y:964}],
 
-            [21,{x:777,y:482},0],[22,{x:444,y:978},0],
-            [23,{x:635,y:376},0],           
+            [20,0,-1,{x:388,y:255}],
+            [21,0,-1,{x:777,y:482}],
+            [22,0,-1,{x:444,y:978}],
+            [23,0,-1,{x:635,y:376}],           
 
         ]
 
@@ -51,17 +61,13 @@ export class Game extends Scene
     preload() {
         // Загружаем ресурсы (если понадобятся)
         // console.log('-- Уровень --');
-        // console.log(this.level);
-        // console.log('-------------');
+ 
         if(this.level < 0){
             this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,1100)}
         }else{
-            this.shild_coords =  this.levels[this.level][1];
+            this.shild_coords =  this.levels[this.level][3];
         }
     
-        // console.log('-------------');
-        // console.log(this.shild_coords);
-        // console.log('-------------');
 
         this.perfect = 0;
 
@@ -72,18 +78,16 @@ export class Game extends Scene
 
 
     create() {
-        
-        
+        let score = 0;
+        let scoreText;
 
         this.add.image(540, 984, 'bg2');
         this.attempts = 3;
 
-        this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
+        // Пишем номер уровня
+            this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
 
-        let score = 0;
-        let scoreText;  
-
-         // Кнопка настроек
+        // Кнопка настроек
             this.button_settings = new Button(
                 this, // сцена
                 100, // x
@@ -97,87 +101,110 @@ export class Game extends Scene
             };   
 
         // Добовляем щит
-        let backboard = this.matter.add.image(this.shild_coords.x,this.shild_coords.y, 'backboard', null, { isStatic: true, isSensor: true});
-        backboard.setScale(0.7)
+            let backboard = this.matter.add.image(this.shild_coords.x,this.shild_coords.y, 'backboard', null, { isStatic: true, isSensor: true});
+            backboard.setScale(0.7)
 
         // добовляем колличество попыток
-        this.addBalls();
+            this.addBalls();
 
         // Создаем мяч
-        this.ball = this.matter.add.image(935, 2000,'ball',{
-                friction: 1,
-                restitution: 0.005,
-                frictionAir: 0.0001,
-                density: 0.09,
-                isStatic: false,
-                angle: 10, // Угол в градусах
-                mass: 0.01
-                
-            });
-        this.ball.setCircle(60);
-        this.ball.setScale(0.7)
-        this.ball.setBounce(0.5);
+            this.ball = this.matter.add.image(935, 2000,'ball',{
+                    friction: 1,
+                    restitution: 0.005,
+                    frictionAir: 0.0001,
+                    density: 0.09,
+                    isStatic: false,
+                    angle: 10, // Угол в градусах
+                    mass: 0.01
+                    
+                });
+            this.ball.setCircle(60);
+            this.ball.setScale(0.7)
+            this.ball.setBounce(0.5);
 
         // добовляем кольцо
-        this.addHoop(this.shild_coords.x,this.shild_coords.y);
-
-        
-
+            this.addHoop(this.shild_coords.x,this.shild_coords.y);
 
         // Событие для проверки попадания
-        this.matter.world.on('collisionstart', (event) => {
-            event.pairs.forEach((pair) => {
-                if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        //score += 1;
-                        //scoreText.setText('Score: ' + score);
-                        const win_scren = this.scene.get('GameOver');
-                        if(this.perfect === 1){                            
-                            win_scren.star = 1;
+            const win_scren = this.scene.get('GameOver');
+            this.matter.world.on('collisionstart', (event) => {
+                event.pairs.forEach((pair) => {
+                    if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            //score += 1;
+                            //scoreText.setText('Score: ' + score);
+                            
+                            if(this.perfect === 1){                            
+                                win_scren.star += 1;
+                            }
+                            this.levels[this.level][2] = 1;                        
+                            setTimeout(this.gameOver, 1500);
+                            
                         }
-                        this.levels[this.level][2] = 1;                        
-                        setTimeout(this.gameOver, 1500);
-                        
                     }
-                }
 
-                if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        if(this.perfect === 0){
-                            this.perfect += 1;
+                    // проверка на чистое поподание
+                    if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            if(this.perfect === 0){
+                                this.perfect += 1;
+                            }
+                            console.log(this.perfect,'добавили');
                         }
-                        console.log(this.perfect,'добавили');
                     }
-                }
 
-                if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        if(this.perfect!=0){
-                            this.perfect -= 1;
-                        }                        
-                        console.log(this.perfect,'убавили');
+                    if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            if(this.perfect!=0){
+                                this.perfect -= 1;
+                            }                        
+                            console.log(this.perfect,'убавили');
+                        }
                     }
-                }
+                    // конец проверки
+
+                    // Проверка на взятие звездочки
+                    if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {                                               
+                            console.log(this.star,'взяли звездочку');
+                            this.star.visible = false;
+                            win_scren.star += 1;
+                        }
+                    }
+
+
+                });
             });
-        });
 
         // Текст для отображения счета
-        //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-
-       
+            //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
         // Земля
-        //let tree = this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
-        this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
-        this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
-        this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });      
+            //let tree = this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
+            this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
+            this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
+            this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });      
 
-        this.addTramplin();
+            //this.addTramplin();
+            this.addTramplin(905,1500,0,81,490,20);
 
+        // собераем уровень
+            if(this.levels[this.level].length > 5){
+                let settingsPlatform = this.levels[this.level][5];
+                this.addTramplin(...settingsPlatform);
+            }
+            
+            if(this.levels[this.level].length > 4){
+                let cordStar = this.levels[this.level][4];
+                this.addStar(cordStar.x,cordStar.y);
+            }else{
+                win_scren.star += 1;
+            }
 
         // Добовление педали
         this.addPaddle();        
 
+        // Упровление мышкой для отладки
         //this.controlMouse();
     } 
 
@@ -203,16 +230,19 @@ export class Game extends Scene
     }
 
     addBalls(){
+        // Функция для отрисовки колличества попыток
+
         for (let i = 0; i < this.attempts; i++) {
             const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
             this.attemptsIcons.push(icon);
         }
 
         this.attemptsIcons.reverse();
-        
     }
 
     removeBalls(){
+        // Функция для удаления неудачной попытки
+
         for (const item of this.attemptsIcons) {
             if(item._visible != false){
                 item.setVisible(false);
@@ -220,15 +250,34 @@ export class Game extends Scene
             }
         }
     }
+
+    addStar(x,y){
+        // функция для установки победной звездочки
+
+        this.star = this.add.image(x, y, 'star');
+
+        this.starSensor = this.matter.add.rectangle(x , y, 10, 10, {
+            isSensor: true,
+            isStatic: true
+        });
+    }
     
 
-    addTramplin(){
-         // Создаём массив точек для дуги
+    addTramplin(x,y,start,end,radius,steps,barer=false){
+        // Функция для создания объеектов в виде окружности
+
+        //addTramplin(905,1500,0,81,490,20)
+        // Создаём массив точек для дуги
+        
+        // const x = 905;
+        // const y = 1500;
+        // const radius = 490; // Радиус дуги
+        // const steps = 20; // Количество сегментов для гладкости дуги
+
         const vertices = [];
-        const radius = 450; // Радиус дуги
-        const startAngle = Phaser.Math.DegToRad(0); // Начальный угол
-        const endAngle = Phaser.Math.DegToRad(80); // Конечный угол
-        const steps = 20; // Количество сегментов для гладкости дуги
+        const startAngle = Phaser.Math.DegToRad(start); // Начальный угол
+        const endAngle = Phaser.Math.DegToRad(end); // Конечный угол
+        
 
         for (let i = 0; i <= steps; i++) {
             const angle = startAngle + (i / steps) * (endAngle - startAngle);
@@ -240,17 +289,31 @@ export class Game extends Scene
         // Закрываем дугу с другой стороны
         for (let i = steps; i >= 0; i--) {
             const angle = startAngle + (i / steps) * (endAngle - startAngle);
-            const x = Math.cos(angle) * (radius - 20); // Внутренняя часть дуги
-            const y = Math.sin(angle) * (radius - 20);
+            const x = Math.cos(angle) * (radius - 10); // Внутренняя часть дуги
+            const y = Math.sin(angle) * (radius - 10);
             vertices.push({ x, y });
         }
 
-        this.matter.add.fromVertices(920, 1500, vertices, {
+        const body = this.matter.add.fromVertices(x, y, vertices, {
             friction: 0.0005,
             restitution: 0.5,
             density: 0.0001,
             isStatic: true
         }, true); // true позволяет автоматически корректировать форму
+
+        if(barer){
+            // Создаём графику
+            const graphics = this.add.graphics();
+            graphics.fillStyle(0x1E1E1E, 1); 
+            graphics.fillPoints(vertices, true);
+
+            // Синхронизируем графику с физическим телом
+            this.matter.world.on('afterupdate', () => {
+                graphics.x = body.position.x-28;
+                graphics.y = body.position.y+165;
+                graphics.rotation = body.angle;
+            });
+        }        
     }
 
     // Кольцо
@@ -443,7 +506,7 @@ export class Game extends Scene
     }
 
 
-    // допы
+    // Упровление мышю для отладки
     onPointerDown(pointer) {
         const dist = Phaser.Math.Distance.Between(pointer.x, pointer.y, this.circle.position.x, this.circle.position.y);
         if (dist < 20) {

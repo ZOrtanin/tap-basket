@@ -41,7 +41,9 @@ export class GameOver extends Scene
 
     win(){
 
-        if(this.star === 2){
+
+
+        if(this.star === 2 || this.star > 2){
             this.add.image(540, 584, '3stars');
         }
         
@@ -52,6 +54,13 @@ export class GameOver extends Scene
         if(this.star === 0){
             this.add.image(540, 584, '1stars');
         }
+
+        // сохраняем прогресс
+        const game = this.scene.get('Game');
+
+        game.levels[game.level][1] = 1;
+        game.levels[game.level][2] = this.star;
+        this.save(game.levels);
 
         
         //this.add.image(540, 984, 'button_win');
@@ -68,7 +77,7 @@ export class GameOver extends Scene
             );
 
         this.button_new_game.relise = function() { 
-            const game = this.scene.get('Game');
+            
             game.level += 1;
             this.scene.start('Game');          
         };
@@ -103,12 +112,15 @@ export class GameOver extends Scene
             this.scene.start('MainMenu');          
         };
 
-
     }
 
     fall(){
         this.add.image(540, 584, 'stars');
         //this.add.image(540, 984, 'button_fall');
+
+        // сохраняем прогресс
+        const game = this.scene.get('Game');
+        this.save(game.level);
 
         // перезапуск игры
         this.button_new_game = new Button(
@@ -139,5 +151,22 @@ export class GameOver extends Scene
         this.button_new_game.relise = function() { 
             this.scene.start('MainMenu');          
         };
+    }
+
+    save(levels){
+        const game = this.scene.get('Game');
+            
+
+        const playerProgress = {
+            level: 'level',
+            levels: game.levels,
+            score: 1200,
+            items: ['sword', 'shield'],
+        };
+
+        const main = this.scene.get('MainMenu');
+        const progressManager = main.progressManager;
+
+        progressManager.save(playerProgress);
     }
 }

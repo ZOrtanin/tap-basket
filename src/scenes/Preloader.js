@@ -37,6 +37,7 @@ export class Preloader extends Scene
         this.load.image('ring', 'ring.png');
         this.load.image('backboard', 'shield.png')
         this.load.image('ball', 'ball.png');
+        this.load.image('star', 'Star.png');
         this.load.image('dark_ball', 'dark_ball.png');
         this.load.image('paddle', 'paddle.png');
         this.load.image('bg2', 'bg2.png');
