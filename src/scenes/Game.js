@@ -82,7 +82,7 @@ export class Game extends Scene{
         let scoreText;
 
         this.add.image(540, 984, 'bg2');
-        this.attempts = 3;
+       
 
         // Пишем номер уровня
             this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
@@ -101,10 +101,17 @@ export class Game extends Scene{
             };   
 
         // Добовляем щит
-            let backboard = this.matter.add.image(this.shild_coords.x,this.shild_coords.y, 'backboard', null, { isStatic: true, isSensor: true});
+            let backboard = this.matter.add.image(
+                this.shild_coords.x,
+                this.shild_coords.y, 
+                'backboard', 
+                null, 
+                { isStatic: true, isSensor: true}
+                );
             backboard.setScale(0.7)
 
         // добовляем колличество попыток
+            this.attempts = 3;
             this.addBalls();
 
         // Создаем мяч
@@ -127,6 +134,7 @@ export class Game extends Scene{
 
         // Событие для проверки попадания
             const win_scren = this.scene.get('GameOver');
+            
             this.matter.world.on('collisionstart', (event) => {
                 event.pairs.forEach((pair) => {
                     if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
@@ -229,9 +237,8 @@ export class Game extends Scene{
         this.updateNet();
     }
 
+    // Функция для отрисовки колличества попыток
     addBalls(){
-        // Функция для отрисовки колличества попыток
-
         for (let i = 0; i < this.attempts; i++) {
             const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
             this.attemptsIcons.push(icon);
@@ -240,9 +247,8 @@ export class Game extends Scene{
         this.attemptsIcons.reverse();
     }
 
+    // Функция для удаления неудачной попытки
     removeBalls(){
-        // Функция для удаления неудачной попытки
-
         for (const item of this.attemptsIcons) {
             if(item._visible != false){
                 item.setVisible(false);
@@ -251,21 +257,18 @@ export class Game extends Scene{
         }
     }
 
+    // Функция для установки победной звездочки
     addStar(x,y){
-        // функция для установки победной звездочки
-
         this.star = this.add.image(x, y, 'star');
 
         this.starSensor = this.matter.add.rectangle(x , y, 10, 10, {
             isSensor: true,
             isStatic: true
         });
-    }
-    
+    }    
 
+    // Функция для создания объеектов в виде окружности
     addTramplin(x,y,start,end,radius,steps,barer=false){
-        // Функция для создания объеектов в виде окружности
-
         //addTramplin(905,1500,0,81,490,20)
         // Создаём массив точек для дуги
         
@@ -504,7 +507,6 @@ export class Game extends Scene{
         //     }
         // });
     }
-
 
     // Упровление мышю для отладки
     onPointerDown(pointer) {
