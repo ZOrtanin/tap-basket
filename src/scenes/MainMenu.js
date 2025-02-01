@@ -1,4 +1,4 @@
-import Button from '../utils/button.js';
+import Button from '../Objects/button.js';
 import GameProgress from '../utils/GameProgress.js';
 
 import { Scene } from 'phaser';

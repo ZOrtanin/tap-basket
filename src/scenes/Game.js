@@ -1,4 +1,4 @@
-import Button from '../utils/button.js';
+import Button from '../Objects/button.js';
 import {getRandomInt} from '../utils/utils.js';
 
 import { Scene } from 'phaser';
@@ -81,74 +81,30 @@ export class Game extends Scene{
         let score = 0;
         let scoreText;
 
-        this.add.image(540, 984, 'bg2');
-       
+        this.add.image(540, 984, 'bg2');       
 
         // Пишем номер уровня
             this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
 
-        // Кнопка настроек
-            this.button_settings = new Button(
-                this, // сцена
-                100, // x
-                100, // y
-                'settings_activ', // не активна
-                'settings', // активна
-                );
+        // интерфейс 
+            this.addUI();  
 
-            this.button_settings.relise = function() { 
-                this.scene.start('MainMenu');         
-            };   
-
-        // Добовляем щит
-            let backboard = this.matter.add.image(
-                this.shild_coords.x,
-                this.shild_coords.y, 
-                'backboard', 
-                null, 
-                { isStatic: true, isSensor: true}
-                );
-            backboard.setScale(0.7)
-
-        // добовляем мячи
-            this.addBalls();       
-
-        // добовляем кольцо
+        // добовляем кольцо и мяч
             this.addHoop(this.shild_coords.x,this.shild_coords.y);
 
         // Событие для проверки попадания
             this.evensGame();
 
+        // Сборка уровня
+            this.buildLevel(); 
+
+
+
         // Текст для отображения счета
             //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
-        // Земля
-            //let tree = this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
-            this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
-            this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
-            this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });      
-
-            //this.addTramplin();
-            this.addTramplin(905,1500,0,81,490,20);
-
-        // собераем уровень
-            if(this.levels[this.level].length > 5){
-                let settingsPlatform = this.levels[this.level][5];
-                this.addTramplin(...settingsPlatform);
-            }
-            
-            if(this.levels[this.level].length > 4){
-                let cordStar = this.levels[this.level][4];
-                this.addStar(cordStar.x,cordStar.y);
-            }else{
-                win_scren.star += 1;
-            }
-
-        // Добовление педали
-        this.addPaddle();        
-
         // Упровление мышкой для отладки
-        //this.controlMouse();
+            //this.controlMouse();
     } 
 
     gameOver(){
@@ -228,10 +184,61 @@ export class Game extends Scene{
         this.updateNet();
     }
 
-    // Функция для отрисовки мяча и колличества попыток
-    addBalls(){
+    buildLevel(){
+        // Границы игры
+        //let tree = this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
+        this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
+        this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
+        this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });      
+
+        //this.addTramplin();
+        this.addTramplin(905,1500,0,81,490,20);
+
+        // собераем уровень
+        if(this.levels[this.level].length > 5){
+            let settingsPlatform = this.levels[this.level][5];
+            this.addTramplin(...settingsPlatform);
+        }
+        
+        if(this.levels[this.level].length > 4){
+            let cordStar = this.levels[this.level][4];
+            this.addStar(cordStar.x,cordStar.y);
+        }else{
+            win_scren.star += 1;
+        }
+
+        // Добовление педали
+        this.addPaddle();    
+    }
+
+    addUI(){
         // добовляем колличество попыток
-        this.attempts = 3;        
+        this.attempts = 3;
+
+        // Кнопка настроек
+            this.button_settings = new Button(
+                this, // сцена
+                100, // x
+                100, // y
+                'settings_activ', // не активна
+                'settings', // активна
+                );
+
+            this.button_settings.relise = function() { 
+                this.scene.start('MainMenu');         
+            };
+
+        // добовляем попытки
+            for (let i = 0; i < this.attempts; i++) {
+                const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
+                this.attemptsIcons.push(icon);
+            }
+
+            this.attemptsIcons.reverse();
+    }
+
+    // Функция для отрисовки мяча и колличества попыток
+    addBall(){
 
         // Создаем мяч
         this.ball = this.matter.add.image(935, 2000,'ball',0,{
@@ -245,16 +252,9 @@ export class Game extends Scene{
                     
                 });
             this.ball.setCircle(60);
-            this.ball.setScale(0.7)
+            this.ball.setScale(0.7);
             this.ball.setBounce(0.5);
 
-
-        for (let i = 0; i < this.attempts; i++) {
-            const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
-            this.attemptsIcons.push(icon);
-        }
-
-        this.attemptsIcons.reverse();
     }
 
     // Функция для удаления неудачной попытки
@@ -331,6 +331,18 @@ export class Game extends Scene{
 
     // Кольцо
     addHoop(x,y){
+        // Добовляем щит
+        let backboard = this.matter.add.image(
+            x,
+            y, 
+            'backboard', 
+            null, 
+            { isStatic: true, isSensor: true}
+            );
+        backboard.setScale(0.7)
+
+        // добовляем мячи
+        this.addBall();
 
         let hoopPositionX = x;
         let hoopPositionY = y;

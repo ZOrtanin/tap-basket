@@ -1,4 +1,4 @@
-import Button from '../utils/button.js';
+import Button from '../Objects/button.js';
 import {getRandomInt} from '../utils/utils.js';
 
 import { Scene } from 'phaser';
