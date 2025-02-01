@@ -85,7 +85,7 @@ export class Levels extends Scene
         
 
         this.button_new_game.relise = function() { 
-            console.log(name);
+            //console.log(name);
             //this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,800)}
             const game = this.scene.get('Game');
             game.level = name;

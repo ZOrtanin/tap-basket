@@ -17,20 +17,14 @@ export class MainMenu extends Scene
         // загрузка настроек из локал сторедж
         const loadedProgress = this.progressManager.load();
         if (loadedProgress) {
-            console.log('Загруженный прогресс:', loadedProgress.levels);
+            //console.log('Загруженный прогресс:', loadedProgress.levels);
 
             // установка настроек
 
-            // перебор уровней
+            // загрузка уровней
             const game = this.scene.get('Game');
             game.levels = loadedProgress.levels;
-            // game.levels.forEach(item=>{
-            //     if(loadedProgress.level > item[0] || loadedProgress.level == item[0]){
-            //         item[1]=1;
-            //     }else{
-            //         item[1]=0;
-            //     }
-            // });
+            
         }
 
         
@@ -112,36 +106,22 @@ export class MainMenu extends Scene
             backboard.setScale(0.7)
 
         // Создаем мяч
-            this.ball = this.matter.add.image(550, 500,'ball',{
+            this.ball = this.matter.add.image(550, 500,'ball',0,{
                     friction: 1,
                     restitution: 0.005,
                     frictionAir: 0.0001,
                     density: 0.09,
-                    isStatic: false,
-                    angle: 10, // Угол в градусах
+                    isStatic: false,                   
                     mass: 0.01
                     
                 });
             this.ball.setCircle(60);
             this.ball.setScale(0.7)
             this.ball.setBounce(0.5);
-
+            
         // добовляем кольцо
             this.addHoop(550,600);
 
-        //this.add.image(512, 300, 'logo');
-
-        // this.add.text(512, 460, 'Main Menu', {
-        //     fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-        //     stroke: '#000000', strokeThickness: 8,
-        //     align: 'center'
-        // }).setOrigin(0.5);
-
-        // this.input.once('pointerdown', () => {
-
-        //     this.scene.start('Game');
-
-        // });
     }
 
 

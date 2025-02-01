@@ -6,7 +6,7 @@ export default class GameProgress {
     save(progress) {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(progress));
-            console.log('Прогресс сохранён успешно:', progress);
+            //console.log('Прогресс сохранён успешно:', progress);
         } catch (error) {
             console.error('Ошибка при сохранении прогресса:', error);
         }
@@ -16,10 +16,10 @@ export default class GameProgress {
         try {
             const data = localStorage.getItem(this.storageKey);
             if (data) {
-                console.log('Прогресс загружен успешно');
+                //console.log('Прогресс загружен успешно');
                 return JSON.parse(data);
             } else {
-                console.log('Прогресс не найден');
+                //console.log('Прогресс не найден');
                 return null;
             }
         } catch (error) {

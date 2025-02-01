@@ -18,7 +18,7 @@ export class GameOver extends Scene
 
         const game = this.scene.get('Game');
 
-        console.log(game.attempts)
+        //console.log(game.attempts)
 
         if(game.attempts > -1){
             this.win();

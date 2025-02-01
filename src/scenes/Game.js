@@ -110,79 +110,14 @@ export class Game extends Scene{
                 );
             backboard.setScale(0.7)
 
-        // добовляем колличество попыток
-            this.attempts = 3;
-            this.addBalls();
-
-        // Создаем мяч
-            this.ball = this.matter.add.image(935, 2000,'ball',{
-                    friction: 1,
-                    restitution: 0.005,
-                    frictionAir: 0.0001,
-                    density: 0.09,
-                    isStatic: false,
-                    angle: 10, // Угол в градусах
-                    mass: 0.01
-                    
-                });
-            this.ball.setCircle(60);
-            this.ball.setScale(0.7)
-            this.ball.setBounce(0.5);
+        // добовляем мячи
+            this.addBalls();       
 
         // добовляем кольцо
             this.addHoop(this.shild_coords.x,this.shild_coords.y);
 
         // Событие для проверки попадания
-            const win_scren = this.scene.get('GameOver');
-            
-            this.matter.world.on('collisionstart', (event) => {
-                event.pairs.forEach((pair) => {
-                    if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
-                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                            //score += 1;
-                            //scoreText.setText('Score: ' + score);
-                            
-                            if(this.perfect === 1){                            
-                                win_scren.star += 1;
-                            }
-                            this.levels[this.level][2] = 1;                        
-                            setTimeout(this.gameOver, 1500);
-                            
-                        }
-                    }
-
-                    // проверка на чистое поподание
-                    if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
-                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                            if(this.perfect === 0){
-                                this.perfect += 1;
-                            }
-                            console.log(this.perfect,'добавили');
-                        }
-                    }
-
-                    if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
-                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                            if(this.perfect!=0){
-                                this.perfect -= 1;
-                            }                        
-                            console.log(this.perfect,'убавили');
-                        }
-                    }
-                    // конец проверки
-
-                    // Проверка на взятие звездочки
-                    if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
-                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {                                               
-                            console.log(this.star,'взяли звездочку');
-                            this.star.visible = false;
-                            win_scren.star += 1;
-                        }
-                    }
-
-
-                });
-            });
+            this.evensGame();
 
         // Текст для отображения счета
             //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
@@ -220,6 +155,62 @@ export class Game extends Scene{
         this.scene.start('GameOver');
     }   
 
+    // проверка на косание мяча
+    evensGame(){
+        const win_scren = this.scene.get('GameOver');
+            
+        this.matter.world.on('collisionstart', (event) => {
+            event.pairs.forEach((pair) => {
+                
+                // проверка на забивание ( сенсор под кольцом )
+                if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        //score += 1;
+                        //scoreText.setText('Score: ' + score);
+                        
+                        if(this.perfect === 1){                            
+                            win_scren.star += 1;
+                        }
+                        this.levels[this.level][2] = 1;                        
+                        setTimeout(this.gameOver, 1500);
+                        
+                    }
+                }
+
+                // проверка на чистое поподание ( сенсор над кольцом )
+                if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        if(this.perfect === 0){
+                            this.perfect += 1;
+                        }
+                        //console.log(this.perfect,'добавили');
+                    }
+                }
+
+                // проверка на косание педали
+                if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        if(this.perfect!=0){
+                            this.perfect -= 1;
+                        }                        
+                        //console.log(this.perfect,'убавили');
+                    }
+                }
+                
+                // Проверка на взятие звездочки
+                if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {                                               
+                        //console.log(this.star,'взяли звездочку');
+                        this.star.visible = false;
+                        win_scren.star += 1;
+                    }
+                }
+
+
+            });
+        });
+    }
+
     update() {
         if(this.attempts == -1){
             this.scene.start('GameOver');
@@ -237,8 +228,27 @@ export class Game extends Scene{
         this.updateNet();
     }
 
-    // Функция для отрисовки колличества попыток
+    // Функция для отрисовки мяча и колличества попыток
     addBalls(){
+        // добовляем колличество попыток
+        this.attempts = 3;        
+
+        // Создаем мяч
+        this.ball = this.matter.add.image(935, 2000,'ball',0,{
+                    friction: 1,
+                    restitution: 0.005,
+                    frictionAir: 0.0001,
+                    density: 0.09,
+                    isStatic: false,
+                    angle: 10, // Угол в градусах
+                    mass: 0.01
+                    
+                });
+            this.ball.setCircle(60);
+            this.ball.setScale(0.7)
+            this.ball.setBounce(0.5);
+
+
         for (let i = 0; i < this.attempts; i++) {
             const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
             this.attemptsIcons.push(icon);
