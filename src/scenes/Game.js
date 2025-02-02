@@ -219,17 +219,17 @@ export class Game extends Scene{
         this.attempts = 3;
 
         // Кнопка настроек
-            // this.button_settings = new Button(
-            //     this, // сцена
-            //     100, // x
-            //     100, // y
-            //     'settings_activ', // не активна
-            //     'settings', // активна
-            //     );
+            this.button_settings = new Button(
+                this, // сцена
+                100, // x
+                100, // y
+                'settings_activ', // не активна
+                'settings', // активна
+                );
 
-            // this.button_settings.relise = function() { 
-            //     this.scene.start('MainMenu');         
-            // };
+            this.button_settings.relise = function() { 
+                this.scene.start('MainMenu');         
+            };
 
         // добовляем попытки
             for (let i = 0; i < this.attempts; i++) {
