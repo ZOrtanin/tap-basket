@@ -37,7 +37,6 @@ export default class UI extends Phaser.GameObjects.Sprite {
         this.attempts = 3;
 
 
-
         // добовляем попытки
         for (let i = 0; i < this.attempts; i++) {
             const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);

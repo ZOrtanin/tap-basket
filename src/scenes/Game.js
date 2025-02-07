@@ -1,5 +1,6 @@
 import Button from '../Objects/button.js';
 import UI from '../Objects/ui.js';
+import Sound from '../Objects/sound.js';
 import {getRandomInt} from '../utils/utils.js';
 
 import { Scene } from 'phaser';
@@ -57,6 +58,8 @@ export class Game extends Scene{
 
         ]
 
+        
+
     }
 
     preload() {
@@ -68,6 +71,10 @@ export class Game extends Scene{
         }else{
             this.shild_coords =  this.levels[this.level][3];
         }
+
+        
+        const main_scren = this.scene.get('MainMenu');
+        this.sound = main_scren.sound;
     
 
         this.perfect = 0;
@@ -96,6 +103,7 @@ export class Game extends Scene{
         // Сборка уровня
             this.buildLevel(); 
 
+        //
 
 
         // Текст для отображения счета
@@ -115,6 +123,20 @@ export class Game extends Scene{
             
         this.matter.world.on('collisionstart', (event) => {
             event.pairs.forEach((pair) => {
+                if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                    let impactForce = pair.collision.depth;
+                    // console.log(impactForce);
+                   
+
+                    if(pair.bodyA.label === 'hoop_net' || pair.bodyB.label === 'hoop_net' ){
+                       this.sound.getNet();
+                    }else{
+                        if(impactForce > 4){
+                            this.sound.getUdar();
+                        }
+                    }
+                    
+                }
                 
                 // проверка на забивание ( сенсор под кольцом )
                 if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
@@ -146,14 +168,24 @@ export class Game extends Scene{
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
                         if(this.perfect!=0){
                             this.perfect -= 1;
-                        }                        
+                        }  
+
+                        let impactForce = pair.collision.depth;
+                        // console.log(impactForce);
+                        if(impactForce > 4){
+                            this.sound.getBall();
+                        }                      
                         //console.log(this.perfect,'убавили');
                     }
                 }
                 
                 // Проверка на взятие звездочки
                 if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {                                               
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
+                        if(this.star.visible === true){
+                            this.sound.getStar();
+                        }
+                                                                      
                         //console.log(this.star,'взяли звездочку');
                         this.star.visible = false;
                         win_scren.star += 1;
@@ -184,6 +216,8 @@ export class Game extends Scene{
 
     // Сборка уровня
     buildLevel(){
+        const win_scren = this.scene.get('GameOver');
+        
         // добовляем кольцо и мяч
             this.addHoop(this.shild_coords.x,this.shild_coords.y);
 
@@ -390,9 +424,13 @@ export class Game extends Scene{
         // 480, 510
         this.cloth = this.matter.add.softBody(this.coordnet.x, this.coordnet.y, 6, 6, 10, 10, false, 8, particleOptions, constraintOptions);
 
+        
+
         for (let i = 0; i < this.cloth.bodies.length; i++)
             {
                 const body = this.cloth.bodies[i];
+
+                body.label = "hoop_net";
 
                 if (i == 0 || i == 5)
                 {

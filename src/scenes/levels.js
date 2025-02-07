@@ -56,7 +56,7 @@ export class Levels extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'назад',
+                'НАЗАД',
                 '#D9D9D9'
                 );
 

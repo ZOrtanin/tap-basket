@@ -5,6 +5,7 @@ import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Levels } from './scenes/levels';
 import { Preloader } from './scenes/Preloader';
+import { Settings } from './scenes/Settings';
 
 
 
@@ -35,7 +36,8 @@ const config = {
         MainMenu,
         Levels,
         Game,
-        GameOver
+        GameOver,
+        Settings
     ]
 };
 

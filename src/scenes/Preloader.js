@@ -33,38 +33,52 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
-        this.load.image('ball', 'ball.png');
-        this.load.image('logo', 'logo.png');
-        this.load.image('ring', 'ring.png');
-        this.load.image('backboard', 'shield.png')
+        this.load.audio('myMusic', '/sound/bg.mp3');
+        this.load.audio('myBall', '/sound/ball.mp3');
+        this.load.audio('myUdar', '/sound/udar.mp3');
+        this.load.audio('myNet', '/sound/net.mp3');
+        this.load.audio('myStar', '/sound/star.mp3');
+
+        this.load.image('ball', '/image/ball.png');
+        this.load.image('logo', '/image/logo.png');
+        this.load.image('graffity', '/image/graffity.png');
+        this.load.image('ring', '/image/ring.png');
+        this.load.image('backboard', '/image/shield.png')
         
-        this.load.image('star', 'Star.png');
-        this.load.image('dark_ball', 'dark_ball.png');
-        this.load.image('paddle', 'paddle.png');
-        this.load.image('bg2', 'bg2.png');
-        this.load.image('bg_main', 'bg_main.png');
-        this.load.image('bg_levels', 'levels.png');
+        this.load.image('star', '/image/Star.png');
+        this.load.image('dark_ball', '/image/dark_ball.png');
+        this.load.image('paddle', '/image/paddle.png');
+        this.load.image('bg2', '/image/bg2.png');
+        this.load.image('bg_main', '/image/bg_main.png');
+        this.load.image('bg_levels', '/image/levels.png');
 
-        this.load.image('stars', 'stars.png');
-        this.load.image('1stars', '1stars.png');
-        this.load.image('2stars', '2stars.png');
-        this.load.image('3stars', '3stars.png');
+        this.load.image('stars', '/image/stars.png');
+        this.load.image('1stars', '/image/1stars.png');
+        this.load.image('2stars', '/image/2stars.png');
+        this.load.image('3stars', '/image/3stars.png');
+
+        // настройки
+        this.load.image('slider_line', '/image/slider_line.png');
+
+        this.load.image('chek_box_on', '/image/chek_box_on.png');
+        this.load.image('chek_box_off', '/image/chek_box_off.png');
+
         
-        this.load.image('button_win', 'button_win.png');
-        this.load.image('button_fall', 'button_fall.png');
-        this.load.image('game_over', 'game_over.png');
+        this.load.image('button_win', '/image/button_win.png');
+        this.load.image('button_fall', '/image/button_fall.png');
+        this.load.image('game_over', '/image/game_over.png');
 
-        this.load.image('start_button', 'start_button.png');
-        this.load.image('start_button_activ', 'start_button_activ.png');
+        this.load.image('start_button', '/image/start_button.png');
+        this.load.image('start_button_activ', '/image/start_button_activ.png');
 
-        this.load.image('start_settings', 'start_settings.png');
-        this.load.image('start_settings_activ', 'start_settings_activ.png');
+        this.load.image('start_settings', '/image/start_settings.png');
+        this.load.image('start_settings_activ', '/image/start_settings_activ.png');
         
-        this.load.image('settings', 'settings.png');
-        this.load.image('settings_activ', 'settings_activ.png');
+        this.load.image('settings', '/image/settings.png');
+        this.load.image('settings_activ', '/image/settings_activ.png');
 
-        this.load.image('none_button', 'none_button.png');
-        this.load.image('1%', 'one_procent.png');
+        this.load.image('none_button', '/image/none_button.png');
+        this.load.image('1%', '/image/one_procent.png');
 
         
     }

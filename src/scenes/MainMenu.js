@@ -1,4 +1,5 @@
 import Button from '../Objects/button.js';
+import Sound from '../Objects/sound.js';
 import GameProgress from '../utils/GameProgress.js';
 
 import { Scene } from 'phaser';
@@ -27,6 +28,15 @@ export class MainMenu extends Scene
             
         }
 
+        // console.log(this.sound);
+        if(this.sound.name === 'mysound'){
+            // музыка уже есть
+        }else{
+            this.sound = new Sound(this,this.sound);
+            this.sound.playMusicBG();
+        }
+        
+
         
     }
 
@@ -35,6 +45,8 @@ export class MainMenu extends Scene
         let screenHeight = this.game.config.height;
 
         this.add.image(540, 984, 'bg_main');
+        let graf = this.add.image(540, 1604, 'graffity');
+        graf.setScale(0.6);
         this.block = this.matter.add.rectangle(550, 600, 10, 100, { isStatic: true });
 
         // Кнопка запуска игры
@@ -45,7 +57,7 @@ export class MainMenu extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'старт',
+                'СТАРТ',
                 '#D9D9D9'
                 );
 
@@ -71,7 +83,7 @@ export class MainMenu extends Scene
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
-                'рандом',
+                'РАНДОМ',
                 '#D9D9D9'
                 );
 
@@ -92,13 +104,18 @@ export class MainMenu extends Scene
                 screenHeight-500, // y
                 '', // не активна
                 '', // активна
-                'настройки',
+                'НАСТРОЙКИ',
                 '#D9D9D9'
                 );
 
             this.button_settings.relise = function() { 
                 const gamemenu = this.scene.get('MainMenu');
-                gamemenu.block.isStatic = false;         
+                gamemenu.block.isStatic = false;
+                gamemenu.nextScren = 'Settings';
+               
+                setTimeout(function() {
+                    gamemenu.nextScrenSwich('Settings');
+                }, 1500);         
             };
 
         // Добовляем щит
