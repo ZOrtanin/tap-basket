@@ -262,7 +262,9 @@ export class Game extends Scene{
                 );
 
             this.button_settings.relise = function() { 
-                this.scene.start('MainMenu');         
+                this.scene.get('Settings').prevScreen  = 'Game';
+                console.log('work123',this.scene.get('Settings').prevScreen);
+                this.scene.start('Settings');         
             };
 
         // добовляем попытки

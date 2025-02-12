@@ -60,8 +60,8 @@ export class Preloader extends Scene
         // настройки
         this.load.image('slider_line', '/image/slider_line.png');
 
-        this.load.image('chek_box_on', '/image/chek_box_on.png');
-        this.load.image('chek_box_off', '/image/chek_box_off.png');
+        this.load.image('box', '/image/box.png');
+        this.load.image('chek', '/image/chek.png');
 
         
         this.load.image('button_win', '/image/button_win.png');

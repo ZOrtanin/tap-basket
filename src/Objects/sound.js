@@ -15,7 +15,11 @@ export default class Sound extends Phaser.GameObjects.Sprite {
 
         this.music = true;
         this.sound = true;
+        this.fx = true;
         //console.log(mysound)
+
+        this.volume_music = 0.7;
+        this.volume_fx = 0.7;
 
         this.soundCooldown = false; // Флаг блокировки
     }  
@@ -24,20 +28,20 @@ export default class Sound extends Phaser.GameObjects.Sprite {
         this.sound = true;       
 
         // Воспроизведение звука
-        this.soundBG.play();
-        this.soundBG.setVolume(0.2);     
+        //this.soundBG.play();
+        //this.soundBG.setVolume(0.2);     
         
         
 
         // Также можно добавить слушатели событий звука
-        this.soundBG.on('complete', function() {            
-            this.play();
-        });
+        // this.soundBG.on('complete', function() {            
+        //     this.play();
+        // });
     }
 
     stopSoundBG(){
         this.sound = false;
-        this.soundBG.stop();
+        //this.soundBG.stop();
     }  
 
     playQuake(){
@@ -63,7 +67,7 @@ export default class Sound extends Phaser.GameObjects.Sprite {
 
         // Воспроизведение звука
         this.soundManager.play();
-        this.soundManager.setVolume(0.2);        
+        this.soundManager.setVolume(this.volume_music);        
 
         // Также можно добавить слушатели событий звука
         this.soundManager.on('complete', function() {            
@@ -134,6 +138,16 @@ export default class Sound extends Phaser.GameObjects.Sprite {
         }
     }
 
+    setVolumeMusic(volume){
+        this.soundManager.setVolume(volume);
+    }
+
+    setVolumeFx(volume){
+        this.Ball.setVolume(volume); 
+        this.Udar.setVolume(volume); 
+        this.Net.setVolume(volume); 
+        this.Star.setVolume(volume);
+    }
 
 
 }

@@ -27,7 +27,10 @@ export class MainMenu extends Scene
             game.levels = loadedProgress.levels;
             
         }
+        
+    }
 
+    create (){
         // console.log(this.sound);
         if(this.sound.name === 'mysound'){
             // музыка уже есть
@@ -35,12 +38,8 @@ export class MainMenu extends Scene
             this.sound = new Sound(this,this.sound);
             this.sound.playMusicBG();
         }
-        
 
-        
-    }
 
-    create (){
         let screenWidth = this.game.config.width;
         let screenHeight = this.game.config.height;
 
@@ -112,6 +111,8 @@ export class MainMenu extends Scene
                 const gamemenu = this.scene.get('MainMenu');
                 gamemenu.block.isStatic = false;
                 gamemenu.nextScren = 'Settings';
+
+                this.scene.get('Settings').prevScreen = 'MainMenu';
                
                 setTimeout(function() {
                     gamemenu.nextScrenSwich('Settings');
