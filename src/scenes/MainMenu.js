@@ -31,7 +31,7 @@ export class MainMenu extends Scene
     }
 
     create (){
-        // console.log(this.sound);
+        console.log(this.game.config);
         if(this.sound.name === 'mysound'){
             // музыка уже есть
         }else{
@@ -43,11 +43,14 @@ export class MainMenu extends Scene
         let screenWidth = this.game.config.width;
         let screenHeight = this.game.config.height;
 
+
+
         this.add.image(540, 984, 'bg_main');
         let graf = this.add.image(540, 1604, 'graffity');
         graf.setScale(0.6);
         this.block = this.matter.add.rectangle(550, 600, 10, 100, { isStatic: true });
 
+                
         // Кнопка запуска игры
             this.button_new_game = new Button(
                 this, // сцена
@@ -67,6 +70,9 @@ export class MainMenu extends Scene
                 const gamemenu = this.scene.get('MainMenu');
                 gamemenu.block.isStatic = false;
                 gamemenu.nextScren = 'Levels';
+
+                const game = this.scene.get('Game'); 
+                game.random_level = false;
                
                 setTimeout(function() {
                     gamemenu.nextScrenSwich('Levels');
@@ -92,7 +98,7 @@ export class MainMenu extends Scene
                 gamemenu.block.isStatic = false;
 
                 const game = this.scene.get('Game'); 
-                game.level = -1;
+                game.random_level = true;
                 this.scene.start('Game')      
             };
 

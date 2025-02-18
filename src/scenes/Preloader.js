@@ -33,6 +33,9 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
+        this.load.bitmapFont('white_font', 'fonts/white.png', 'fonts/white.xml');
+        this.load.bitmapFont('dark_font', 'fonts/dark.png', 'fonts/dark.xml');
+
         this.load.audio('myMusic', '/sound/bg.mp3');
         this.load.audio('myBall', '/sound/ball.mp3');
         this.load.audio('myUdar', '/sound/udar.mp3');

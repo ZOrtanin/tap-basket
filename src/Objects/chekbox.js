@@ -6,15 +6,19 @@ export default class Chekbox extends Phaser.GameObjects.Sprite {
         this.value = value;
         
         // подпись чекбокса
-        this.text = scene.add.text(
-            x - ( width / 2 ), 
-            y, 
-            text, {
-                fontFamily: 'Sofia Sans Condensed', 
-                fontSize: 64, 
-                color: '#D9D9D9',            
-                align: 'center'
-                }).setOrigin(0);   
+        // this.text = scene.add.text(
+        //     x - ( width / 2 ), 
+        //     y, 
+        //     text, {
+        //         fontFamily: 'Sofia Sans Condensed', 
+        //         fontSize: 64, 
+        //         color: '#D9D9D9',            
+        //         align: 'center'
+        //         }).setOrigin(0);  
+
+        this.text = scene.add.bitmapText(x - ( width / 2 ), y, 'white_font', text, 80)
+            .setOrigin(0)
+            .setTint(0xD9D9D9); 
 
         // сам чекбокс
         this.box = scene.add.sprite(

@@ -1,6 +1,11 @@
 import Button from '../Objects/button.js';
 import UI from '../Objects/ui.js';
 import Sound from '../Objects/sound.js';
+
+import Tramplin from '../Objects/tramplin.js';
+import Swing from '../Objects/swing.js';
+import Beam from '../Objects/beam.js';
+
 import {getRandomInt} from '../utils/utils.js';
 
 import { Scene } from 'phaser';
@@ -25,21 +30,22 @@ export class Game extends Scene{
 
         this.perfect = 0;
 
+        this.random_level = false;
         this.levels = [
-            [0,1,-1,{x:200,y:700},{x:300,y:300},[450,300,180,380,300,20,true]],
-            [1,0,-1,{x:300,y:700},{x:200,y:500}],
-            [2,0,-1,{x:550,y:800},{x:100,y:700}],
-            [3,0,-1,{x:550,y:300},{x:300,y:300}],
+            [0,0,-1,{x:541,y:885},{x:544,y:632}],
+            [1,0,-1,{x:726,y:658},{x:282,y:637}],
+            [2,0,-1,{x:541,y:1053},{x:147,y:1547}],
+            [3,0,-1,{x:541,y:240},{x:262,y:887}],
 
-            [4,0,-1,{x:550,y:600}],
-            [5,0,-1,{x:415,y:546}],
-            [6,0,-1,{x:662,y:462}],
-            [7,0,-1,{x:696,y:336}],
+            [4,0,-1,{x:739,y:862},{x:480,y:477},[ ['ramp',[608,487,180,380,300,20,true]] ] ],
+            [5,0,-1,{x:247,y:1013},{x:282,y:637},[ ['ramp',[449,647,180,380,300,20,true]] ] ],            
+            [6,0,-1,{x:148,y:726},{x:241,y:323},[ ['ramp',[532,418,180,380,300,20,true]] ] ],
+            [7,0,-1,{x:390,y:569},{x:745,y:1161},[ ['ramp',[592,974,180,380,300,20,true]] ] ],
 
-            [8,0,-1,{x:342,y:400}],
-            [9,0,-1,{x:558,y:586}],
-            [10,0,-1,{x:411,y:543}],
-            [11,0,-1,{x:641,y:450}],
+            [8,0,-1,{x:541,y:720},{x:213,y:374},[ ['beam',[733,632,300,-45]],['beam',[344,632,300,45]] ] ],
+            [9,0,-1,{x:541,y:720},{x:540,y:238},[ ['beam',[420,576,300,90]],['beam',[667,576,300,90]] ] ],
+            [10,0,-1,{x:541,y:720},{x:540,y:238},[ ['beam',[540,540,300,10]] ] ],
+            [11,0,-1,{x:541,y:720},{x:545,y:362},[ ['beam',[668,550,300,30]],['beam',[411,552,300,-30]] ] ],
 
             [12,0,-1,{x:362,y:1045}],
             [13,0,-1,{x:630,y:890}],
@@ -66,7 +72,7 @@ export class Game extends Scene{
         // Загружаем ресурсы (если понадобятся)
         // console.log('-- Уровень --');
  
-        if(this.level < 0){
+        if(this.random_level){
             this.shild_coords = {x:getRandomInt(200,700),y:getRandomInt(250,1100)}
         }else{
             this.shild_coords =  this.levels[this.level][3];
@@ -92,7 +98,13 @@ export class Game extends Scene{
         this.add.image(540, 984, 'bg2');       
 
         // Пишем номер уровня
-            this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
+            // this.add.text(350, 500, this.level, { fontFamily: 'Sofia Sans Condensed', fontSize: '764px', fill: '#37404D' });
+            if(!this.random_level){
+                this.add.bitmapText(550, 800, 'dark_font', this.level, 764)
+                .setOrigin(0.5)
+                .setTint(0x37404D)
+                .setAlpha(0.1);
+            }
 
         // интерфейс 
             this.addUI(); 
@@ -110,7 +122,10 @@ export class Game extends Scene{
             //scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
         // Упровление мышкой для отладки
-            //this.controlMouse();
+            if(this.sys.game.config.physics.matter.debug){
+                this.controlMouse();
+            }
+            
     } 
 
     gameOver(){
@@ -225,20 +240,22 @@ export class Game extends Scene{
             //this.matter.add.rectangle(1000, 1490, 800, 20, { isStatic: true, angle: Phaser.Math.DegToRad(-20) });
             this.matter.add.rectangle(-10, 940, 100, 1900, { isStatic: true });
             this.matter.add.rectangle(1090, 940, 100, 1900, { isStatic: true });
-            this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });
-            this.addTramplin(905,1500,0,81,490,20);
+            this.matter.add.rectangle(550, -20, 1140, 100, { isStatic: true });            
+            this.podacha = new Tramplin(this,[905,1500,0,81,490,20]); 
 
         // Объекты в игре
-            if(this.levels[this.level].length > 5){
-                let settingsPlatform = this.levels[this.level][5];
-                this.addTramplin(...settingsPlatform);
-            }
-            
-            if(this.levels[this.level].length > 4){
-                let cordStar = this.levels[this.level][4];
-                this.addStar(cordStar.x,cordStar.y);
-            }else{
-                win_scren.star += 1;
+            if(!this.random_level){
+                // проверяем объекты в уровне
+                if(this.levels[this.level].length > 5){
+                    this.addObjects(this.levels[this.level][5]);
+                }
+                
+                if(this.levels[this.level].length > 4){
+                    let cordStar = this.levels[this.level][4];
+                    this.addStar(cordStar.x,cordStar.y);
+                }else{
+                    win_scren.star += 1;
+                }
             }
 
         // Добовление педали
@@ -304,6 +321,27 @@ export class Game extends Scene{
         }
     }
 
+    // Функцция добовления объектов
+    addObjects(objects){
+        objects.forEach(item =>{
+
+            if(item[0] == 'ramp'){
+                let settingsPlatform = item[1];                    
+                const ramp = new Tramplin(this,settingsPlatform); 
+            } 
+
+            if(item[0] == 'swing'){
+                let settingsPlatform = item[1];                    
+                const swing = new Swing(this,settingsPlatform);
+            }
+
+            if(item[0] == 'beam'){
+                let settingsPlatform = item[1];                    
+                const swing = new Beam(this,settingsPlatform);
+            }
+        });
+    }
+
     // Функция для установки победной звездочки
     addStar(x,y){
         this.star = this.add.image(x, y, 'star');
@@ -312,59 +350,7 @@ export class Game extends Scene{
             isSensor: true,
             isStatic: true
         });
-    }    
-
-    // Функция для создания объеектов в виде окружности
-    addTramplin(x,y,start,end,radius,steps,barer=false){
-        //addTramplin(905,1500,0,81,490,20)
-        // Создаём массив точек для дуги
-        
-        // const x = 905;
-        // const y = 1500;
-        // const radius = 490; // Радиус дуги
-        // const steps = 20; // Количество сегментов для гладкости дуги
-
-        const vertices = [];
-        const startAngle = Phaser.Math.DegToRad(start); // Начальный угол
-        const endAngle = Phaser.Math.DegToRad(end); // Конечный угол
-        
-
-        for (let i = 0; i <= steps; i++) {
-            const angle = startAngle + (i / steps) * (endAngle - startAngle);
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            vertices.push({ x, y });
-        }
-
-        // Закрываем дугу с другой стороны
-        for (let i = steps; i >= 0; i--) {
-            const angle = startAngle + (i / steps) * (endAngle - startAngle);
-            const x = Math.cos(angle) * (radius - 10); // Внутренняя часть дуги
-            const y = Math.sin(angle) * (radius - 10);
-            vertices.push({ x, y });
-        }
-
-        const body = this.matter.add.fromVertices(x, y, vertices, {
-            friction: 0.0005,
-            restitution: 0.5,
-            density: 0.0001,
-            isStatic: true
-        }, true); // true позволяет автоматически корректировать форму
-
-        if(barer){
-            // Создаём графику
-            const graphics = this.add.graphics();
-            graphics.fillStyle(0x1E1E1E, 1); 
-            graphics.fillPoints(vertices, true);
-
-            // Синхронизируем графику с физическим телом
-            this.matter.world.on('afterupdate', () => {
-                graphics.x = body.position.x-28;
-                graphics.y = body.position.y+165;
-                graphics.rotation = body.angle;
-            });
-        }        
-    }
+    }        
 
     // Кольцо
     addHoop(x,y){

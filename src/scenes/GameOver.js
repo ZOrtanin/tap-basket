@@ -16,11 +16,11 @@ export class GameOver extends Scene
         this.screenHeight = this.game.config.height;
         this.cameras.main.setBackgroundColor(0x3A4452);
 
-        const game = this.scene.get('Game');
+        this.my_game = this.scene.get('Game');
 
         //console.log(game.attempts)
 
-        if(game.attempts > -1){
+        if(this.my_game.attempts > -1){
             this.win();
         }else{
             this.fall();
@@ -65,22 +65,27 @@ export class GameOver extends Scene
         
         //this.add.image(540, 984, 'button_win');
 
-        // следуйщий уровень
-        this.button_new_game = new Button(
-            this, // сцена
-            this.screenWidth/2, // x
-            this.screenHeight-900, // y
-            '', // не активна
-            '', // активна
-            'дальше',
-            '#D9D9D9'
-            );
+        // если уровень не рандомный ставим кнопку 
+        console.log(game.random_level);
+        if(!game.random_level){
 
-        this.button_new_game.relise = function() { 
-            
-            game.level += 1;
-            this.scene.start('Game');          
-        };
+            // следуйщий уровень
+            this.button_new_game = new Button(
+                this, // сцена
+                this.screenWidth/2, // x
+                this.screenHeight-900, // y
+                '', // не активна
+                '', // активна
+                'дальше',
+                '#D9D9D9'
+                );
+
+            this.button_new_game.relise = function() { 
+                
+                game.level += 1;
+                this.scene.start('Game');          
+            };
+        }
 
         // перезапуск игры
         this.button_new_game = new Button(

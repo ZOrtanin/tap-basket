@@ -13,13 +13,26 @@ export default class Button extends Phaser.GameObjects.Sprite {
         this.button = scene.add.sprite(x, y, out).setInteractive();
         
         if(text!=undefined){
-            this.text = scene.add.text(x, y, text, {
-            fontFamily: 'Sofia Sans Condensed', 
-            fontSize: 64, 
-            color: color,
-            // stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-            }).setOrigin(0.5);
+            // this.text = scene.add.text(x, y, text, {
+            // fontFamily: 'Sofia Sans Condensed', 
+            // fontSize: 64, 
+            // color: color,
+            // // stroke: '#000000', strokeThickness: 8,
+            // align: 'center'
+            // }).setOrigin(0.5);
+
+            if(color == '#1E1E1E'){
+                this.text = scene.add.bitmapText(x, y, 'dark_font', text, 80)
+                .setOrigin(0.5)
+                .setTint(0xD9D9D9);
+            }else{
+                this.text = scene.add.bitmapText(x, y, 'white_font', text, 80)
+                .setOrigin(0.5)
+                .setTint(0xD9D9D9);
+            }
+
+            
+
         }
         
        
