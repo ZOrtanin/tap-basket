@@ -3,8 +3,12 @@ import UI from '../Objects/ui.js';
 import Sound from '../Objects/sound.js';
 
 import Tramplin from '../Objects/tramplin.js';
+import TramplinAni from '../Objects/tramplin_ani.js';
 import Swing from '../Objects/swing.js';
 import Beam from '../Objects/beam.js';
+import BeamAni from '../Objects/beam_ani.js';
+import Nullbody from '../Objects/null_body.js';
+import Thorns from '../Objects/thorns.js';
 
 import {getRandomInt} from '../utils/utils.js';
 
@@ -30,6 +34,8 @@ export class Game extends Scene{
 
         this.perfect = 0;
 
+        this.thons_arr = [];
+
         this.random_level = false;
         this.levels = [
             [0,0,-1,{x:541,y:885},{x:544,y:632}],
@@ -47,20 +53,20 @@ export class Game extends Scene{
             [10,0,-1,{x:541,y:720},{x:540,y:238},[ ['beam',[540,540,300,10]] ] ],
             [11,0,-1,{x:541,y:720},{x:545,y:362},[ ['beam',[668,550,300,30]],['beam',[411,552,300,-30]] ] ],
 
-            [12,0,-1,{x:362,y:1045}],
-            [13,0,-1,{x:630,y:890}],
-            [14,0,-1,{x:481,y:562}],
-            [15,0,-1,{x:596,y:911}],
+            [12,0,-1,{x:388,y:255},{x:545,y:362},[ ['swing',[400,801,300,30]],['swing',[805,801,300,30]] ] ],
+            [13,0,-1,{x:338,y:847},{x:486,y:421},[ ['swing',[565,596,300,30]],['ramp',[588,426,180,380,300,20,true]] ] ],
+            [14,0,-1,{x:644,y:1167},{x:644,y:740},[ ['swing',[785,877,400,30]],['beam',[518,1046,300,90]],['beam',[765,1046,300,90]] ] ],
+            [15,0,-1,{x:644,y:1167},{x:644,y:740},[ ['swing',[518,850,300,30]],['swing',[765,850,300,30]],['beam',[518,1046,300,90]],['beam',[765,1046,300,90]] ] ],
+            
+            [16,0,-1,{x:541,y:818},{x:121,y:775},[ ['thorn',[1026,769,300,270]] ] ],
+            [17,0,-1,{x:541,y:1145},{x:541,y:392},[ ['thorn',[55,898,300,90]] ] ],
+            [18,0,-1,{x:541,y:818},{x:542,y:421},[ ['thorn',[1026,769,300,270]],['thorn',[55,769,300,90]] ] ],
+            [19,0,-1,{x:526,y:493},{x:532,y:953},[ ['thorn',[537,750,300,180]] ] ],
 
-            [16,0,-1,{x:516,y:1098}],
-            [17,0,-1,{x:251,y:851}],
-            [18,0,-1,{x:309,y:835}],
-            [19,0,-1,{x:438,y:964}],
-
-            [20,0,-1,{x:388,y:255}],
-            [21,0,-1,{x:777,y:482}],
-            [22,0,-1,{x:444,y:978}],
-            [23,0,-1,{x:635,y:376}],           
+            [20,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,582,300,0,'rout']] ] ],
+            [21,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[346,780,250,0,'slide']] ] ],
+            [22,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,480,400,0,'fly']] ] ],
+            [23,0,-1,{x:541,y:786},{x:540,y:238},[ ['ramp_ani',[541,786,0,310,300,60,true]] ] ],          
 
         ]
 
@@ -138,6 +144,19 @@ export class Game extends Scene{
             
         this.matter.world.on('collisionstart', (event) => {
             event.pairs.forEach((pair) => {
+
+                // от залипания мяча на ровных поверхностях
+                if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                    let velocityX = this.ball.body.velocity.x;
+
+                    // Если скорость почти нулевая, даём лёгкий толчок
+                    if (Math.abs(velocityX) < 1) {
+                        //let direction = Phaser.Math.RND.sign(); // Случайное направление (-1 или 1)
+                        this.ball.setVelocityX(1 * -2); // Двигаем в сторону
+                    }
+                }
+
+                // звук сетки
                 if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
                     let impactForce = pair.collision.depth;
                     // console.log(impactForce);
@@ -178,6 +197,8 @@ export class Game extends Scene{
                     }
                 }
 
+
+
                 // проверка на косание педали
                 if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
@@ -206,6 +227,21 @@ export class Game extends Scene{
                         win_scren.star += 1;
                     }
                 }
+
+                // Проверка на попадание на шипы
+                this.thons_arr.forEach(item => {
+                    if (pair.bodyA === item || pair.bodyB === item) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
+                                                                                                  
+                            console.log(this.star,'попали на шипы');
+                            this.ball.setPosition(935, 500);
+                            this.ball.setVelocity(0, 0);
+                            this.removeBalls()
+                            this.attempts -= 1;
+                            
+                        }
+                    }
+                });
 
 
             });
@@ -280,8 +316,12 @@ export class Game extends Scene{
 
             this.button_settings.relise = function() { 
                 this.scene.get('Settings').prevScreen  = 'Game';
-                console.log('work123',this.scene.get('Settings').prevScreen);
-                this.scene.start('Settings');         
+                //console.log('work123',this.scene.get('Settings').prevScreen);
+                //this.scene.start('Settings');
+                //console.log(this.scene.scene); 
+                this.scene.scene.matter.world.pause();
+                this.scene.pause('Game');  // Приостанавливаем текущую
+                this.scene.launch('Settings');  // Запускаем новую        
             };
 
         // добовляем попытки
@@ -330,6 +370,11 @@ export class Game extends Scene{
                 const ramp = new Tramplin(this,settingsPlatform); 
             } 
 
+            if(item[0] == 'ramp_ani'){
+                let settingsPlatform = item[1];                    
+                const ramp = new TramplinAni(this,settingsPlatform); 
+            }
+
             if(item[0] == 'swing'){
                 let settingsPlatform = item[1];                    
                 const swing = new Swing(this,settingsPlatform);
@@ -337,7 +382,22 @@ export class Game extends Scene{
 
             if(item[0] == 'beam'){
                 let settingsPlatform = item[1];                    
-                const swing = new Beam(this,settingsPlatform);
+                const beam = new Beam(this,settingsPlatform);
+            }
+
+            if(item[0] == 'beam_ani'){
+                let settingsPlatform = item[1];                    
+                const beam = new BeamAni(this,settingsPlatform);
+            }
+
+            if(item[0] == 'null'){
+                let settingsPlatform = item[1];                    
+                const null_body = new Nullbody(this,settingsPlatform);
+            }
+
+            if(item[0] == 'thorn'){
+                let settingsPlatform = item[1];                    
+                const null_body = new Thorns(this,settingsPlatform);
             }
         });
     }
@@ -346,7 +406,7 @@ export class Game extends Scene{
     addStar(x,y){
         this.star = this.add.image(x, y, 'star');
 
-        this.starSensor = this.matter.add.rectangle(x , y, 10, 10, {
+        this.starSensor = this.matter.add.rectangle(x , y, 100, 100, {
             isSensor: true,
             isStatic: true
         });

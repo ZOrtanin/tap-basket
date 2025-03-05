@@ -66,7 +66,7 @@ export class GameOver extends Scene
         //this.add.image(540, 984, 'button_win');
 
         // если уровень не рандомный ставим кнопку 
-        console.log(game.random_level);
+        //console.log(game.random_level);
         if(!game.random_level){
 
             // следуйщий уровень

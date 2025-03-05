@@ -1,4 +1,4 @@
-export default class Beam extends Phaser.GameObjects.Sprite {
+export default class Nullbody extends Phaser.GameObjects.Sprite {
     constructor(scene,settings) {
         super(scene); 
 
@@ -29,16 +29,16 @@ export default class Beam extends Phaser.GameObjects.Sprite {
     addBeam(){
         
         // тело
-        let paddle = this.scene.matter.add.rectangle(this.x, this.y, this.width, 20, {
-            ffriction: 0.0005,
-            restitution: 1,
+        let paddle = this.scene.matter.add.rectangle(this.x, this.y, 40, 40, {
+            ffriction: 0.5,
+            restitution: 0.5,
             density: 0.1,
             isStatic: true,
             angle: Phaser.Math.DegToRad(this.angle) // Угол поворота в радианах (45 градусов)           
         });
 
         // текстура
-        let sprite = this.scene.add.rectangle(this.x, this.y, this.width, 10, 0x000000);         
+        let sprite = this.scene.add.rectangle(this.x, this.y, this.width, 40, 0x000000);         
         this.scene.matter.add.gameObject(sprite, paddle);
         
 

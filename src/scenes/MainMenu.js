@@ -31,7 +31,7 @@ export class MainMenu extends Scene
     }
 
     create (){
-        console.log(this.game.config);
+        //console.log(this.game.config);
         if(this.sound.name === 'mysound'){
             // музыка уже есть
         }else{

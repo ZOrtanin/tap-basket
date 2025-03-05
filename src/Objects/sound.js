@@ -18,7 +18,7 @@ export default class Sound extends Phaser.GameObjects.Sprite {
         this.fx = true;
         //console.log(mysound)
 
-        this.volume_music = 0.7;
+        this.volume_music = 0.3;
         this.volume_fx = 0.7;
 
         this.soundCooldown = false; // Флаг блокировки

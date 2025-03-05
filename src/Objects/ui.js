@@ -7,7 +7,7 @@ export default class UI extends Phaser.GameObjects.Sprite {
 
         this.scene = scene.scene;
 
-        console.log(this.scene);
+        //console.log(this.scene);
 
         // Кнопка настроек
         // this.scene.button_settings = new Button(

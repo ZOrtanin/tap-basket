@@ -9,7 +9,7 @@ export class Settings extends Scene
 {
     constructor ()
     {   
-        console.log('делаем с нуля');
+        //console.log('делаем с нуля');
         super('Settings');
         this.progressManager = new GameProgress();
 
@@ -17,7 +17,7 @@ export class Settings extends Scene
 
         this.save = { 
             volume:true,
-            volume_level:0.7,
+            volume_level:0.3,
             fx:true,
             fx_level:0.7
             }
@@ -36,7 +36,7 @@ export class Settings extends Scene
         let screenHeight = this.game.config.height;
 
         //this.add.image(540, 984, 'bg_main');
-        this.block = this.matter.add.rectangle(550, 600, 10, 100, { isStatic: true });
+        this.add.rectangle(screenWidth/2, screenHeight/2, 1300, 2000, 0x3A4452);
 
         console.log(this.prevScreen);
 
@@ -128,7 +128,7 @@ export class Settings extends Scene
             this.button_settings = new Button(
                 this, // сцена
                 screenWidth/2, // x
-                screenHeight-500, // y
+                screenHeight-1500, // y
                 '', // не активна
                 '', // активна
                 'СБРОСИТЬ ПРОГРЕСС',
@@ -138,6 +138,24 @@ export class Settings extends Scene
             this.button_settings.relise = function() { 
                 const gamemenu = this.scene.get('MainMenu');
                 gamemenu.progressManager.clear();         
+            };
+
+        // Начать заново
+            this.button_settings = new Button(
+                this, // сцена
+                screenWidth/2, // x
+                screenHeight-500, // y
+                '', // не активна
+                '', // активна
+                'ЗАНОВО',
+                '#D9D9D9'
+                );
+
+            this.button_settings.relise = function() { 
+                this.scene.stop('Game');
+                this.scene.start('Game');
+                this.scene.stop();
+                //const game = this.scene.get('Game');                     
             };
 
         // Выход в меню
@@ -153,7 +171,10 @@ export class Settings extends Scene
                     '#D9D9D9'
                     );
 
-                this.button_mainmenu.relise = function() {                     
+                this.button_mainmenu.relise = function() {  
+                    this.scene.manager.scenes.forEach(scene => {
+                        scene.scene.stop();
+                    });                   
                     this.scene.start('MainMenu');      
                 };
 
@@ -173,8 +194,20 @@ export class Settings extends Scene
 
             this.button_new_game.relise = function() { 
                 let screen = this.scene.get('Settings').prevScreen;
-                console.log(screen);
-                this.scene.start(screen);      
+                //console.log(screen);
+                //this.scene.start(screen);  
+
+                this.scene.stop();  // Приостанавливаем текущую
+                //this.scene.launch(screen);  // Запускаем новую 
+                if( screen != 'MainMenu'){
+                    let game = this.scene.get('Game')
+                    //console.log(game)
+                    game.matter.world.resume();
+                    this.scene.resume(screen); 
+                }else{
+                    this.scene.start(screen); 
+                }             
+                       
             };
       
     }
