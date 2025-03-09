@@ -68,54 +68,15 @@ export class GameOver extends Scene
         // если уровень не рандомный ставим кнопку 
         //console.log(game.random_level);
         if(!game.random_level){
-
             // следуйщий уровень
-            this.button_new_game = new Button(
-                this, // сцена
-                this.screenWidth/2, // x
-                this.screenHeight-900, // y
-                '', // не активна
-                '', // активна
-                'дальше',
-                '#D9D9D9'
-                );
-
-            this.button_new_game.relise = function() { 
-                
-                game.level += 1;
-                this.scene.start('Game');          
-            };
+            this.btn_next_level(game);
         }
 
         // перезапуск игры
-        this.button_new_game = new Button(
-            this, // сцена
-            this.screenWidth/2, // x
-            this.screenHeight-800, // y
-            '', // не активна
-            '', // активна
-            'еще',
-            '#D9D9D9'
-            );
+        this.btn_restart();
 
-        this.button_new_game.relise = function() { 
-            this.scene.start('Game');          
-        };
-
-        // выход в менб
-        this.button_new_game = new Button(
-            this, // сцена
-            this.screenWidth/2, // x
-            this.screenHeight-700, // y
-            '', // не активна
-            '', // активна
-            'в меню',
-            '#D9D9D9'
-            );
-
-        this.button_new_game.relise = function() { 
-            this.scene.start('MainMenu');          
-        };
+        // выход в меню
+        this.btn_exit_menu();
 
     }
 
@@ -128,34 +89,10 @@ export class GameOver extends Scene
         this.save(game.level);
 
         // перезапуск игры
-        this.button_new_game = new Button(
-            this, // сцена
-            this.screenWidth/2, // x
-            this.screenHeight-800, // y
-            '', // не активна
-            '', // активна
-            'еще',
-            '#D9D9D9'
-            );
+        this.btn_restart();        
 
-        this.button_new_game.relise = function() { 
-            this.scene.start('Game');          
-        };
-
-        // выход в менб
-        this.button_new_game = new Button(
-            this, // сцена
-            this.screenWidth/2, // x
-            this.screenHeight-700, // y
-            '', // не активна
-            '', // активна
-            'в меню',
-            '#D9D9D9'
-            );
-
-        this.button_new_game.relise = function() { 
-            this.scene.start('MainMenu');          
-        };
+        // выход в меню
+        this.btn_exit_menu();
     }
 
     save(levels){
@@ -173,5 +110,58 @@ export class GameOver extends Scene
         const progressManager = main.progressManager;
 
         progressManager.save(playerProgress);
+    }
+
+    btn_restart(){
+        // перезапуск игры
+        this.button_new_game = new Button(
+            this, // сцена
+            this.screenWidth/2, // x
+            this.screenHeight-800, // y
+            '', // не активна
+            '', // активна
+            'ЕЩЕ',
+            '#D9D9D9'
+            );
+
+        this.button_new_game.relise = function() { 
+            this.scene.start('Game');          
+        };
+    }
+
+    btn_exit_menu(){
+        // выход в меню
+        this.button_new_game = new Button(
+            this, // сцена
+            this.screenWidth/2, // x
+            this.screenHeight-700, // y
+            '', // не активна
+            '', // активна
+            'МЕНЮ',
+            '#D9D9D9'
+            );
+
+        this.button_new_game.relise = function() { 
+            this.scene.start('MainMenu');          
+        };
+    }
+
+    btn_next_level(game){
+        // следуйщий уровень
+        this.button_new_game = new Button(
+            this, // сцена
+            this.screenWidth/2, // x
+            this.screenHeight-900, // y
+            '', // не активна
+            '', // активна
+            'ДАЛЬШЕ',
+            '#D9D9D9'
+            );
+
+        this.button_new_game.relise = function() { 
+            
+            game.level += 1;
+            this.scene.start('Game');          
+        };
     }
 }

@@ -30,7 +30,7 @@ export default class Beam extends Phaser.GameObjects.Sprite {
         
         // тело
         let paddle = this.scene.matter.add.rectangle(this.x, this.y, this.width, 20, {
-            ffriction: 0.0005,
+            friction: 0.0005,
             restitution: 1,
             density: 0.1,
             isStatic: true,

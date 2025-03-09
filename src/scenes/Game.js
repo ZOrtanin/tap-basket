@@ -34,6 +34,8 @@ export class Game extends Scene{
 
         this.perfect = 0;
 
+        this.arr_win = [];
+
         this.thons_arr = [];
 
         this.random_level = false;
@@ -66,7 +68,7 @@ export class Game extends Scene{
             [20,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,582,300,0,'rout']] ] ],
             [21,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[346,780,250,0,'slide']] ] ],
             [22,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,480,400,0,'fly']] ] ],
-            [23,0,-1,{x:541,y:786},{x:540,y:238},[ ['ramp_ani',[541,786,0,310,300,60,true]] ] ],          
+            [23,0,-1,{x:541,y:786},{x:540,y:238},[ ['ramp_ani',[541,786,0,350,300,60,true]] ] ],          
 
         ]
 
@@ -146,102 +148,125 @@ export class Game extends Scene{
             event.pairs.forEach((pair) => {
 
                 // от залипания мяча на ровных поверхностях
-                if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                    let velocityX = this.ball.body.velocity.x;
+                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                        let velocityX = this.ball.body.velocity.x;
 
-                    // Если скорость почти нулевая, даём лёгкий толчок
-                    if (Math.abs(velocityX) < 1) {
-                        //let direction = Phaser.Math.RND.sign(); // Случайное направление (-1 или 1)
-                        this.ball.setVelocityX(1 * -2); // Двигаем в сторону
+                        // Если скорость почти нулевая, даём лёгкий толчок
+                        if (Math.abs(velocityX) < 1) {
+                            //let direction = Phaser.Math.RND.sign(); // Случайное направление (-1 или 1)
+                            this.ball.setVelocityX(1 * -2); // Двигаем в сторону
+                        }
                     }
-                }
 
                 // звук сетки
-                if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                    let impactForce = pair.collision.depth;
-                    // console.log(impactForce);
-                   
-
-                    if(pair.bodyA.label === 'hoop_net' || pair.bodyB.label === 'hoop_net' ){
-                       this.sound.getNet();
-                    }else{
-                        if(impactForce > 4){
-                            this.sound.getUdar();
-                        }
-                    }
-                    
-                }
-                
-                // проверка на забивание ( сенсор под кольцом )
-                if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        //score += 1;
-                        //scoreText.setText('Score: ' + score);
-                        
-                        if(this.perfect === 1){                            
-                            win_scren.star += 1;
-                        }
-                        this.levels[this.level][2] = 1;                        
-                        setTimeout(this.gameOver, 1500);
-                        
-                    }
-                }
-
-                // проверка на чистое поподание ( сенсор над кольцом )
-                if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        if(this.perfect === 0){
-                            this.perfect += 1;
-                        }
-                        //console.log(this.perfect,'добавили');
-                    }
-                }
-
-
-
-                // проверка на косание педали
-                if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        if(this.perfect!=0){
-                            this.perfect -= 1;
-                        }  
-
                         let impactForce = pair.collision.depth;
                         // console.log(impactForce);
-                        if(impactForce > 4){
-                            this.sound.getBall();
-                        }                      
-                        //console.log(this.perfect,'убавили');
-                    }
-                }
-                
-                // Проверка на взятие звездочки
-                if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
-                        if(this.star.visible === true){
-                            this.sound.getStar();
-                        }
-                                                                      
-                        //console.log(this.star,'взяли звездочку');
-                        this.star.visible = false;
-                        win_scren.star += 1;
-                    }
-                }
+                       
 
-                // Проверка на попадание на шипы
-                this.thons_arr.forEach(item => {
-                    if (pair.bodyA === item || pair.bodyB === item) {
-                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
-                                                                                                  
-                            console.log(this.star,'попали на шипы');
-                            this.ball.setPosition(935, 500);
-                            this.ball.setVelocity(0, 0);
-                            this.removeBalls()
-                            this.attempts -= 1;
+                        if(pair.bodyA.label === 'hoop_net' || pair.bodyB.label === 'hoop_net' ){
+                           this.sound.getNet();
+                        }else{
+                            if(impactForce > 4){
+                                this.sound.getUdar();
+                            }
+                        }
+                        
+                    }
+                
+                // проверка на чистое поподание ( сенсор над кольцом )
+                    if (pair.bodyA === this.winSensor || pair.bodyB === this.winSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            if(this.perfect === 0){
+                                this.perfect += 1;
+                            }
+                            if(JSON.stringify(this.arr_win) === JSON.stringify(["up"])){
+                                console.log('уже засчитано');
+                            }else{
+                                this.arr_win.push('up');
+                            }
+                            
+                            console.log('ссенсор над кольцом');
+                            console.log(this.arr_win);
+                            setTimeout(() => {
+                                    this.arr_win = []; // Сбрасываем массив
+                                    console.log('После сброса:', this.arr_win);
+                                }, 1500); // 3 секунды
+                            //console.log(this.perfect,'добавили');
+                        }
+                    }
+
+                // проверка на забивание ( сенсор под кольцом )
+                    if (pair.bodyA === this.hoopSensor || pair.bodyB === this.hoopSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            //score += 1;
+                            //scoreText.setText('Score: ' + score);
+                            console.log('ссенсор под  кольцом');
+                            this.arr_win.push('down');
+                            console.log(this.arr_win);
+                            
+                            if(this.perfect === 1){                            
+                                win_scren.star += 1;
+                            }
+
+                            if(JSON.stringify(this.arr_win) == JSON.stringify(["up", "down"])){
+                                this.levels[this.level][2] = 1; 
+                                this.arr_win = [];                       
+                                setTimeout(this.gameOver, 1500);
+                            }else{
+                               this.arr_win = [];
+                               console.log('не щитается') 
+                            }
+                            
                             
                         }
                     }
-                });
+
+                
+
+                // проверка на косание педали
+                    if (pair.bodyA === this.paddle_sensor || pair.bodyB === this.paddle_sensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                            if(this.perfect!=0){
+                                this.perfect -= 1;
+                            }  
+
+                            let impactForce = pair.collision.depth;
+                            // console.log(impactForce);
+                            if(impactForce > 4){
+                                this.sound.getBall();
+                            }                      
+                            //console.log(this.perfect,'убавили');
+                        }
+                    }
+                
+                // Проверка на взятие звездочки
+                    if (pair.bodyA === this.starSensor || pair.bodyB === this.starSensor) {
+                        if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
+                            if(this.star.visible === true){
+                                this.sound.getStar();
+                            }
+                                                                          
+                            //console.log(this.star,'взяли звездочку');
+                            this.star.visible = false;
+                            win_scren.star += 1;
+                        }
+                    }
+
+                // Проверка на попадание на шипы
+                    this.thons_arr.forEach(item => {
+                        if (pair.bodyA === item || pair.bodyB === item) {
+                            if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) { 
+                                                                                                      
+                                //console.log(this.star,'попали на шипы');
+                                this.ball.setPosition(935, 500);
+                                this.ball.setVelocity(0, 0);
+                                this.removeBalls()
+                                this.attempts -= 1;
+                                
+                            }
+                        }
+                    });
 
 
             });
@@ -439,7 +464,7 @@ export class Game extends Scene{
         let border2 = this.matter.add.rectangle(hoopPositionX+65, hoopPositionY+10, 5, 15, { isStatic: true });
 
         // Добавляем невидимый сенсор для засчета попадания
-        this.hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+20, hoopWidth, 10, {
+        this.hoopSensor = this.matter.add.rectangle(hoopPositionX, hoopPositionY+90, hoopWidth, 10, {
             isSensor: true,
             isStatic: true
         });
