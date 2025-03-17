@@ -141,29 +141,31 @@ export class Settings extends Scene
             };
 
         // Начать заново
-            this.button_settings = new Button(
-                this, // сцена
-                screenWidth/2, // x
-                screenHeight-500, // y
-                '', // не активна
-                '', // активна
-                'ЗАНОВО',
-                '#D9D9D9'
-                );
+            if(this.prevScreen == 'Game'){
+                this.button_settings = new Button(
+                    this, // сцена
+                    screenWidth/2, // x
+                    screenHeight-600, // y
+                    '', // не активна
+                    '', // активна
+                    'ЗАНОВО',
+                    '#D9D9D9'
+                    );
 
-            this.button_settings.relise = function() { 
-                this.scene.stop('Game');
-                this.scene.start('Game');
-                this.scene.stop();
-                //const game = this.scene.get('Game');                     
-            };
+                this.button_settings.relise = function() { 
+                    this.scene.stop('Game');
+                    this.scene.start('Game');
+                    this.scene.stop();
+                    //const game = this.scene.get('Game');                     
+                };
+            }
 
         // Выход в меню
             if(this.prevScreen == 'Game'){
                 this.button_mainmenu = new Button(
                     this, // сцена
                     screenWidth/2, // x
-                    screenHeight-400, // y
+                    screenHeight-450, // y
                     '','',
                     // 'start_button_activ', // не активна
                     // 'start_button', // активна

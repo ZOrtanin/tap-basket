@@ -1,8 +1,14 @@
 export default class Button extends Phaser.GameObjects.Sprite {
     constructor(scene,x,y,over,out,text,color='#1E1E1E',type=false,value=false,touch=false) {
         super(scene); 
-
+        this.main = scene;
         this.scene = scene.scene;
+        this.x = x;
+        this.y = y;
+        this.text = text;
+        this.value_text = text;
+
+        this.action = false;
 
         if(out == ''){
             out = '1%';
@@ -22,16 +28,19 @@ export default class Button extends Phaser.GameObjects.Sprite {
             // }).setOrigin(0.5);
 
             if(color == '#1E1E1E'){
-                this.text = scene.add.bitmapText(x, y, 'dark_font', text, 80)
+                this.render = scene.add.bitmapText(x, y, 'dark_font', text, 80)
                 .setOrigin(0.5)
                 .setTint(0xD9D9D9);
-            }else{
-                this.text = scene.add.bitmapText(x, y, 'white_font', text, 80)
-                .setOrigin(0.5)
-                .setTint(0xD9D9D9);
-            }
 
-            
+                this.default = 'dark_font';
+                
+            }else{
+                this.render = scene.add.bitmapText(x, y, 'white_font', text, 80)
+                .setOrigin(0.5)
+                .setTint(0xD9D9D9);
+
+                this.default = 'white_font';
+            }
 
         }
         
@@ -48,16 +57,12 @@ export default class Button extends Phaser.GameObjects.Sprite {
 
         // Добавление обработчика события для щелчка по кнопке
         this.button.on('pointerdown', this.onButtonClicked, this);
-        this.button.on('pointerup',this.onButtonUpper, this);
 
-
-        if(type==='chek'){
-            this.button.setTexture(this.texture);
-        }else{             
-            this.button.on('pointerover', this.onButtonOver, this);
-            this.button.on('pointerout', this.onButtonOut, this);
-        }
-
+        // добовление обрабочика при наведении
+        this.button.on('pointerover', this.onButtonOver, this);
+       
+        // добовление обрабочика выхода за границу
+        this.button.on('pointerout', this.onButtonOut, this);
         
         if(this.value===false){           
             this.texture = this.out;
@@ -67,13 +72,6 @@ export default class Button extends Phaser.GameObjects.Sprite {
         }
         //console.log(this.value);
         this.button.setTexture(this.texture);
-
-
-
-        if(this._visible === false){
-            // console.log('не видемая');
-        }
-        
         
     }
 
@@ -85,53 +83,65 @@ export default class Button extends Phaser.GameObjects.Sprite {
         if(this.visible === false){
             // console.log('не видемая');
         }
-        // console.log('123-12312312');
+        
     }
 
     onButtonClicked() {
+        // поведение при клике
+        console.log(this.render);
+        if(this.out === '1%'){
+            this.action = true;
+            this.render.destroy();
+            this.render = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
+                    .setOrigin(0.5)
+                    .setTint(0xD9D9D9);
+        }
+        
+
         // Обработчик события для щелчка по кнопке
         if(this.value===true){
             this.texture = this.out;
         }else{
             this.texture = this.over;
         }
-        this.button.setTexture(this.texture);
-        if (this.touch) {
-           
-        }else{
-            this.relise();
-        }
-    }
 
-    onButtonUpper() {
-        if (this.touch) {
-           
-        }else{
-            this.unrelise();
-        }
+        this.button.setTexture(this.texture);
+        this.action = true;
+        this.relise();
         
     }
 
     onButtonOver() {
-        // Обработчик события для щелчка по кнопке        
-        this.button.setTexture(this.over);
-        if (this.touch) {
-           this.relise(); 
+        // пведение кнопки при наведении
+        // if(this.value===true){
+        //     this.texture = this.out;
+        // }else{
+        //     this.texture = this.over;
+        // }
+        
+        console.log(this.out);
+        if( this.out === '1%' ){
+            this.render.destroy();
+            this.render = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
+                .setOrigin(0.5)
+                .setTint(0xD9D9D9);
         }
-        // console.log('2')
+        
+        
     }
 
     onButtonOut() {
-        // Обработчик события для щелчка по кнопке        
-        this.button.setTexture(this.out);
-        if (this.touch) {
-           this.unrelise(); 
+        // пведение кнопки привыходе за границу
+        if(this.action === false && this.out === '1%'){
+            this.render.destroy();
+            this.render = this.main.add.bitmapText(this.x, this.y, this.default, this.text, 80)
+                .setOrigin(0.5)
+                .setTint(0xD9D9D9);
         }
-        //console.log('3')
     }  
 
     relise(){
-        // console.log('запуск');
+        //console.log('запуск');
     } 
     unrelise(){
         // console.log('отпуск');

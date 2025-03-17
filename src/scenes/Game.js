@@ -68,7 +68,7 @@ export class Game extends Scene{
             [20,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,582,300,0,'rout']] ] ],
             [21,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[346,780,250,0,'slide']] ] ],
             [22,0,-1,{x:541,y:786},{x:541,y:308},[ ['beam_ani',[541,480,400,0,'fly']] ] ],
-            [23,0,-1,{x:541,y:786},{x:540,y:238},[ ['ramp_ani',[541,786,0,350,300,60,true]] ] ],          
+            [23,0,-1,{x:541,y:786},{x:540,y:238},[ ['ramp_ani',[541,786,0,300,300,60,true]] ] ],          
 
         ]
 
@@ -349,6 +349,23 @@ export class Game extends Scene{
                 this.scene.launch('Settings');  // Запускаем новую        
             };
 
+        // Кнопка встряхнуть
+            this.button_kick = new Button(
+                this, // сцена
+                200, // x
+                100, // y
+                'kick', // не активна
+                'kick', // активна
+                );
+
+            this.button_kick.relise = function() { 
+                this.scene.scene.matter.world.localWorld.bodies.forEach(body => {
+                    console.log(body);
+                    const force = { x: 0.5, y: 0 }; // Например, ветер вправо
+                    this.scene.scene.matter.body.applyForce(body, body.position, force);
+                });       
+            };
+
         // добовляем попытки
             for (let i = 0; i < this.attempts; i++) {
                 const icon = this.add.image(935, 190+i*110, 'dark_ball').setScale(0.7);
@@ -371,9 +388,12 @@ export class Game extends Scene{
                     mass: 0.01
                     
                 });
-            this.ball.setCircle(60);
-            this.ball.setScale(0.7);
-            this.ball.setBounce(0.5); 
+        this.ball.label = 'my_ball';
+        console.log(this.ball);
+        this.ball.setCircle(60);
+        this.ball.setScale(0.7);
+        this.ball.setBounce(0.5); 
+
     }
 
     // Функция для удаления неудачной попытки

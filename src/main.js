@@ -8,8 +8,6 @@ import { Preloader } from './scenes/Preloader';
 import { Settings } from './scenes/Settings';
 
 
-
-
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config = {
@@ -23,7 +21,7 @@ const config = {
         default: 'matter',
         matter: {
             gravity: { y: 1 },
-            debug: true
+            debug: false
         }
     },
     scale: {

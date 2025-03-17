@@ -31,6 +31,8 @@ export class MainMenu extends Scene
     }
 
     create (){
+        
+
         //console.log(this.game.config);
         if(this.sound.name === 'mysound'){
             // музыка уже есть
@@ -55,7 +57,7 @@ export class MainMenu extends Scene
             this.button_new_game = new Button(
                 this, // сцена
                 screenWidth/2, // x
-                screenHeight-700, // y
+                screenHeight-750, // y
                 '','',
                 // 'start_button_activ', // не активна
                 // 'start_button', // активна
@@ -99,14 +101,19 @@ export class MainMenu extends Scene
 
                 const game = this.scene.get('Game'); 
                 game.random_level = true;
-                this.scene.start('Game')      
+                //this.scene.start('Game') 
+
+                setTimeout(function() {
+                    gamemenu.nextScrenSwich('Game');
+                }, 1500); 
+                     
             };
 
         // Кнопка настройки
             this.button_settings = new Button(
                 this, // сцена
                 screenWidth/2, // x
-                screenHeight-500, // y
+                screenHeight-450, // y
                 '', // не активна
                 '', // активна
                 'НАСТРОЙКИ',
@@ -146,6 +153,26 @@ export class MainMenu extends Scene
         // добовляем кольцо
             this.addHoop(550,600);
 
+        console.log('инициализация СДК');
+        // YaGames
+        //     .init()
+        //     .then(ysdk => {
+        //         console.log('Yandex SDK initialized');
+        //         window.ysdk = ysdk;
+        //     });
+
+        // this.input.once('pointerdown', () => {
+        //     console.log('инициализация СДК');
+        //     this.initYandexSDK();
+        // });
+
+        
+        
+    }
+
+    initYandexSDK(){ 
+        console.log("YaGames ready"); 
+        window.ysdk.features.LoadingAPI?.ready(); 
     }
 
 

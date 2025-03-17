@@ -79,6 +79,8 @@ export class Preloader extends Scene
         this.load.image('start_settings', '/image/start_settings.png');
         this.load.image('start_settings_activ', '/image/start_settings_activ.png');
         
+        this.load.image('kick', '/image/kick.png');
+
         this.load.image('settings', '/image/settings.png');
         this.load.image('settings_activ', '/image/settings_activ.png');
 
@@ -95,5 +97,7 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
+
+        
     }
 }

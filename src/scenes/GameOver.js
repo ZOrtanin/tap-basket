@@ -134,7 +134,7 @@ export class GameOver extends Scene
         this.button_new_game = new Button(
             this, // сцена
             this.screenWidth/2, // x
-            this.screenHeight-700, // y
+            this.screenHeight-650, // y
             '', // не активна
             '', // активна
             'МЕНЮ',
@@ -151,7 +151,7 @@ export class GameOver extends Scene
         this.button_new_game = new Button(
             this, // сцена
             this.screenWidth/2, // x
-            this.screenHeight-900, // y
+            this.screenHeight-950, // y
             '', // не активна
             '', // активна
             'ДАЛЬШЕ',
