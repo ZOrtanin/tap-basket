@@ -86,6 +86,7 @@ export default class Tramplin extends Phaser.GameObjects.Sprite {
 
         // Ось вращения платформы
         const pivot = this.scene.matter.add.circle(this.x, this.y, 5, { isStatic: true });
+        pivot.collisionFilter.mask = 0;
 
         // Связь между платформой и осью
         this.scene.matter.add.constraint(body, pivot, 0, 1,{

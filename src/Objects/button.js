@@ -28,14 +28,14 @@ export default class Button extends Phaser.GameObjects.Sprite {
             // }).setOrigin(0.5);
 
             if(color == '#1E1E1E'){
-                this.render = scene.add.bitmapText(x, y, 'dark_font', text, 80)
+                this.render_btn = scene.add.bitmapText(x, y, 'dark_font', text, 80)
                 .setOrigin(0.5)
                 .setTint(0xD9D9D9);
 
                 this.default = 'dark_font';
                 
             }else{
-                this.render = scene.add.bitmapText(x, y, 'white_font', text, 80)
+                this.render_btn = scene.add.bitmapText(x, y, 'white_font', text, 80)
                 .setOrigin(0.5)
                 .setTint(0xD9D9D9);
 
@@ -52,7 +52,7 @@ export default class Button extends Phaser.GameObjects.Sprite {
         this.value = value;
         this.touch = touch;
 
-        this.activ;
+        this.activ = true;
         this.texture = over;
 
         // Добавление обработчика события для щелчка по кнопке
@@ -86,13 +86,23 @@ export default class Button extends Phaser.GameObjects.Sprite {
         
     }
 
+    deactived(){
+        this.activ = false;
+        this.button.setAlpha(0.5);
+    }
+
+    actived(){
+        this.activ = true;
+        this.button.setAlpha(1);
+    }
+
     onButtonClicked() {
         // поведение при клике
-        console.log(this.render);
+        // console.log(this.render_btn);
         if(this.out === '1%'){
             this.action = true;
-            this.render.destroy();
-            this.render = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
+            this.render_btn.destroy();
+            this.render_btn = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
                     .setOrigin(0.5)
                     .setTint(0xD9D9D9);
         }
@@ -119,10 +129,10 @@ export default class Button extends Phaser.GameObjects.Sprite {
         //     this.texture = this.over;
         // }
         
-        console.log(this.out);
+        // console.log(this.out);
         if( this.out === '1%' ){
-            this.render.destroy();
-            this.render = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
+            this.render_btn.destroy();
+            this.render_btn = this.main.add.bitmapText(this.x, this.y, 'dark_font', this.text, 80)
                 .setOrigin(0.5)
                 .setTint(0xD9D9D9);
         }
@@ -133,8 +143,8 @@ export default class Button extends Phaser.GameObjects.Sprite {
     onButtonOut() {
         // пведение кнопки привыходе за границу
         if(this.action === false && this.out === '1%'){
-            this.render.destroy();
-            this.render = this.main.add.bitmapText(this.x, this.y, this.default, this.text, 80)
+            this.render_btn.destroy();
+            this.render_btn = this.main.add.bitmapText(this.x, this.y, this.default, this.text, 80)
                 .setOrigin(0.5)
                 .setTint(0xD9D9D9);
         }

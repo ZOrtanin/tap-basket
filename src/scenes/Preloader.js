@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import YandexSDKFile from '../utils/yandex_sdk.js';
 
 export class Preloader extends Scene
 {
@@ -10,14 +11,15 @@ export class Preloader extends Scene
     init ()
     {
         //  We loaded this image in our Boot Scene, so we can display it here
-        //this.add.image(512, 384, 'background');
+        
         this.cameras.main.setBackgroundColor(0x3A4452);
+        this.add.image(512, 684, 'logo_artburn');
 
         //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+        this.add.rectangle(512, 984, 468, 32).setStrokeStyle(1, 0xffffff);
 
         //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
+        const bar = this.add.rectangle(512-230, 984, 4, 28, 0xffffff);
 
         //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
         this.load.on('progress', (progress) => {
@@ -26,10 +28,15 @@ export class Preloader extends Scene
             bar.width = 4 + (460 * progress);
 
         });
+
+        // Флаг загрузки Yandex SDK
+        this.ysdkLoaded = false;
     }
 
     preload ()
-    {
+    {   
+        // this.load.addFile(new YandexSDKFile(this));
+
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
@@ -54,6 +61,7 @@ export class Preloader extends Scene
         this.load.image('bg2', '/image/bg2.png');
         this.load.image('bg_main', '/image/bg_main.png');
         this.load.image('bg_levels', '/image/levels.png');
+        this.load.image('bg_final', '/image/final_bg.png');
 
         this.load.image('spike', '/image/spike.png');
 
@@ -80,12 +88,28 @@ export class Preloader extends Scene
         this.load.image('start_settings_activ', '/image/start_settings_activ.png');
         
         this.load.image('kick', '/image/kick.png');
+        this.load.image('bzz', '/image/bzz.png');
+        this.load.image('tap', '/image/tap.png');
 
         this.load.image('settings', '/image/settings.png');
         this.load.image('settings_activ', '/image/settings_activ.png');
 
         this.load.image('none_button', '/image/none_button.png');
         this.load.image('1%', '/image/one_procent.png');
+
+
+
+        // Инициализация Yandex SDK
+        console.log('инициализация СДК');        
+        if(window.__DEV__ !== true){
+            YaGames.init().then(ysdk => {
+                console.log('Yandex SDK initialized');
+                window.ysdk = ysdk;
+                this.ysdkLoaded = true; // Устанавливаем флаг
+            });
+        }
+
+
 
         
     }
@@ -96,8 +120,27 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
+        // this.scene.start('MainMenu');
+
+        // Проверяем, загружен ли SDK и все ассеты
+        console.log('инициализация СДК');        
+        if(window.__DEV__ !== true){
+            this.time.addEvent({
+                delay: 100,
+                callback: () => {
+                    if (this.ysdkLoaded) {
+                        window.ysdk.features.LoadingAPI?.ready(); 
+                        this.scene.start('MainMenu');
+                    }
+                },
+                loop: true
+            });
+        }else{
+            this.scene.start('MainMenu');
+        }
 
         
     }
+
+
 }

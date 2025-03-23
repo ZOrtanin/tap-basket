@@ -46,7 +46,7 @@ export class Game extends Scene{
             [3,0,-1,{x:541,y:240},{x:262,y:887}],
 
             [4,0,-1,{x:739,y:862},{x:480,y:477},[ ['ramp',[608,487,180,380,300,20,true]] ] ],
-            [5,0,-1,{x:247,y:1013},{x:282,y:637},[ ['ramp',[449,647,180,380,300,20,true]] ] ],            
+            [5,0,-1,{x:247,y:1013},{x:282,y:637},[ ['ramp',[455,647,180,380,300,20,true]] ] ],            
             [6,0,-1,{x:148,y:726},{x:241,y:323},[ ['ramp',[532,418,180,380,300,20,true]] ] ],
             [7,0,-1,{x:390,y:569},{x:745,y:1161},[ ['ramp',[592,974,180,380,300,20,true]] ] ],
 
@@ -148,15 +148,15 @@ export class Game extends Scene{
             event.pairs.forEach((pair) => {
 
                 // от залипания мяча на ровных поверхностях
-                    if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
-                        let velocityX = this.ball.body.velocity.x;
+                    // if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
+                    //     let velocityX = this.ball.body.velocity.x;
 
-                        // Если скорость почти нулевая, даём лёгкий толчок
-                        if (Math.abs(velocityX) < 1) {
-                            //let direction = Phaser.Math.RND.sign(); // Случайное направление (-1 или 1)
-                            this.ball.setVelocityX(1 * -2); // Двигаем в сторону
-                        }
-                    }
+                    //     // Если скорость почти нулевая, даём лёгкий толчок
+                    //     if (Math.abs(velocityX) < 1) {
+                    //         //let direction = Phaser.Math.RND.sign(); // Случайное направление (-1 или 1)
+                    //         this.ball.setVelocityX(1 * -2); // Двигаем в сторону
+                    //     }
+                    // }
 
                 // звук сетки
                     if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
@@ -181,16 +181,16 @@ export class Game extends Scene{
                                 this.perfect += 1;
                             }
                             if(JSON.stringify(this.arr_win) === JSON.stringify(["up"])){
-                                console.log('уже засчитано');
+                                // console.log('уже засчитано');
                             }else{
                                 this.arr_win.push('up');
                             }
                             
-                            console.log('ссенсор над кольцом');
-                            console.log(this.arr_win);
+                            // console.log('ссенсор над кольцом');
+                            // console.log(this.arr_win);
                             setTimeout(() => {
                                     this.arr_win = []; // Сбрасываем массив
-                                    console.log('После сброса:', this.arr_win);
+                                    // console.log('После сброса:', this.arr_win);
                                 }, 1500); // 3 секунды
                             //console.log(this.perfect,'добавили');
                         }
@@ -201,9 +201,9 @@ export class Game extends Scene{
                         if (pair.bodyA === this.ball.body || pair.bodyB === this.ball.body) {
                             //score += 1;
                             //scoreText.setText('Score: ' + score);
-                            console.log('ссенсор под  кольцом');
+                            // console.log('ссенсор под  кольцом');
                             this.arr_win.push('down');
-                            console.log(this.arr_win);
+                            // console.log(this.arr_win);
                             
                             if(this.perfect === 1){                            
                                 win_scren.star += 1;
@@ -215,7 +215,7 @@ export class Game extends Scene{
                                 setTimeout(this.gameOver, 1500);
                             }else{
                                this.arr_win = [];
-                               console.log('не щитается') 
+                               // console.log('не щитается') 
                             }
                             
                             
@@ -335,7 +335,7 @@ export class Game extends Scene{
                 this, // сцена
                 100, // x
                 100, // y
-                'settings_activ', // не активна
+                'settings', // не активна
                 'settings', // активна
                 );
 
@@ -349,21 +349,38 @@ export class Game extends Scene{
                 this.scene.launch('Settings');  // Запускаем новую        
             };
 
+        // Кнопка удара
+            this.add.image(803, 1828, 'tap');
+
         // Кнопка встряхнуть
             this.button_kick = new Button(
                 this, // сцена
-                200, // x
-                100, // y
-                'kick', // не активна
-                'kick', // активна
+                994, // x
+                1684, // y
+                'bzz', // не активна
+                'bzz', // активна
                 );
 
-            this.button_kick.relise = function() { 
-                this.scene.scene.matter.world.localWorld.bodies.forEach(body => {
-                    console.log(body);
-                    const force = { x: 0.5, y: 0 }; // Например, ветер вправо
-                    this.scene.scene.matter.body.applyForce(body, body.position, force);
-                });       
+            this.button_kick.relise = function() {
+                const button = this; 
+
+                if(button.activ){
+                    this.scene.scene.matter.world.localWorld.bodies.forEach(body => {
+                        // console.log(body);
+                        const force = { x: 0.5, y: 0 }; // Например, ветер вправо
+                        this.scene.scene.matter.body.applyForce(body, body.position, force);
+                    });
+                    // console.log(this); 
+                    this.scene.scene.cameras.main.shake(500, 0.02);
+                    
+                    button.deactived();
+
+                    setTimeout(function() {
+                        button.actived();
+                        // console.log(button);
+                    }, 3000);  
+                }
+                    
             };
 
         // добовляем попытки
@@ -389,7 +406,7 @@ export class Game extends Scene{
                     
                 });
         this.ball.label = 'my_ball';
-        console.log(this.ball);
+        // console.log(this.ball);
         this.ball.setCircle(60);
         this.ball.setScale(0.7);
         this.ball.setBounce(0.5); 

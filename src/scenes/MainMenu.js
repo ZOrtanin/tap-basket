@@ -31,7 +31,6 @@ export class MainMenu extends Scene
     }
 
     create (){
-        
 
         //console.log(this.game.config);
         if(this.sound.name === 'mysound'){
@@ -50,6 +49,10 @@ export class MainMenu extends Scene
         this.add.image(540, 984, 'bg_main');
         let graf = this.add.image(540, 1604, 'graffity');
         graf.setScale(0.6);
+        let art_burn = this.add.image(840, 1704, 'logo_artburn');
+        art_burn.setAngle(Phaser.Math.DegToRad(33));
+        art_burn._rotation = Phaser.Math.DegToRad(33);
+        console.log(Phaser.Math.DegToRad(333))
         this.block = this.matter.add.rectangle(550, 600, 10, 100, { isStatic: true });
 
                 
@@ -153,18 +156,23 @@ export class MainMenu extends Scene
         // добовляем кольцо
             this.addHoop(550,600);
 
-        console.log('инициализация СДК');
-        // YaGames
-        //     .init()
-        //     .then(ysdk => {
-        //         console.log('Yandex SDK initialized');
-        //         window.ysdk = ysdk;
-        //     });
+        // console.log('инициализация СДК');        
+        // if(window.__DEV__ !== true){
+        //     YaGames
+        //         .init()
+        //         .then(ysdk => {
+        //             console.log('Yandex SDK initialized');
+        //             window.ysdk = ysdk;
+        //         });
 
-        // this.input.once('pointerdown', () => {
-        //     console.log('инициализация СДК');
         //     this.initYandexSDK();
-        // });
+
+        //     // this.input.once('pointerdown', () => {
+        //     //     console.log('инициализация СДК');
+        //     //     this.initYandexSDK();
+        //     // });
+        // }
+        
 
         
         
@@ -172,7 +180,7 @@ export class MainMenu extends Scene
 
     initYandexSDK(){ 
         console.log("YaGames ready"); 
-        window.ysdk.features.LoadingAPI?.ready(); 
+        window.ysdk.features.LoadingAPI?.ready();         
     }
 
 

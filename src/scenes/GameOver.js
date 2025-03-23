@@ -161,7 +161,14 @@ export class GameOver extends Scene
         this.button_new_game.relise = function() { 
             
             game.level += 1;
-            this.scene.start('Game');          
+
+            if(game.level<23){
+                this.scene.start('Game');
+            }else{
+                game.level = 0;
+                this.scene.start('FinalGame');
+            }
+                      
         };
     }
 }

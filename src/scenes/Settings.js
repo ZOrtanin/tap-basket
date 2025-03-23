@@ -38,7 +38,7 @@ export class Settings extends Scene
         //this.add.image(540, 984, 'bg_main');
         this.add.rectangle(screenWidth/2, screenHeight/2, 1300, 2000, 0x3A4452);
 
-        console.log(this.prevScreen);
+        //console.log(this.prevScreen);
 
         // Слайдер музыки
             this.chek_box_music = new Chekbox(
@@ -123,22 +123,23 @@ export class Settings extends Scene
                 this.sound.setVolumeFx(this.volume)
                 //console.log('work relise');
             }
-        
         // Кнопка сброса
-            this.button_settings = new Button(
-                this, // сцена
-                screenWidth/2, // x
-                screenHeight-1500, // y
-                '', // не активна
-                '', // активна
-                'СБРОСИТЬ ПРОГРЕСС',
-                '#D9D9D9'
-                );
+            if(window.__DEV__){           
+                this.button_settings = new Button(
+                    this, // сцена
+                    screenWidth/2, // x
+                    screenHeight-1500, // y
+                    '', // не активна
+                    '', // активна
+                    'СБРОСИТЬ ПРОГРЕСС',
+                    '#D9D9D9'
+                    );
 
-            this.button_settings.relise = function() { 
-                const gamemenu = this.scene.get('MainMenu');
-                gamemenu.progressManager.clear();         
-            };
+                this.button_settings.relise = function() { 
+                    const gamemenu = this.scene.get('MainMenu');
+                    gamemenu.progressManager.clear();         
+                };
+            }
 
         // Начать заново
             if(this.prevScreen == 'Game'){
