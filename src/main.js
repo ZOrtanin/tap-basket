@@ -8,7 +8,7 @@ import { Levels } from './scenes/levels';
 import { Preloader } from './scenes/Preloader';
 import { Settings } from './scenes/Settings';
 
-window.__DEV__ = false;
+window.__DEV__ = true;
 
 // this.input.manager.canvas.addEventListener('contextmenu', function (e) {
 //             e.preventDefault();
